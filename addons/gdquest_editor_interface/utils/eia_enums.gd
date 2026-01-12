@@ -75,7 +75,14 @@ enum NPAssetLibrary { # 5_000_000
 
 # Utilities.
 
-static var _enum_map := {}
+static var _enum_value_map: Dictionary[int, String] = {}
+
+
+static func _static_init() -> void:
+	var enum_map := (new().get_script() as Script).get_script_constant_map()
+	for enum_name: String in enum_map:
+		for enum_key: String in enum_map[enum_name]:
+			_enum_value_map[enum_map[enum_name][enum_key]] = enum_name
 
 
 ## Reflection method that returns the enum value key for the given enum and value.
@@ -87,10 +94,9 @@ static func get_enum_key(enum_type: Dictionary, enum_value: int) -> String:
 	return String(enum_key)
 
 
-## Reflection method that returns the enum name for the given enum.
-static func get_enum_name(enum_type: Dictionary) -> String:
-	if _enum_map.is_empty():
-		_enum_map = new().get_script().get_script_constant_map()
+## Reflection method that returns the enum name for the given enum value.
+static func get_enum_name(enum_value: int) -> String:
+	if not _enum_value_map.has(enum_value):
+		return ""
 
-	var enum_name := _enum_map.find_key(enum_type)
-	return String(enum_name)
+	return _enum_value_map[enum_value]
