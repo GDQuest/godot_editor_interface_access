@@ -64,26 +64,60 @@ func _parse_steps(config: ConfigFile) -> bool:
 		if not section_name.begins_with("resolver_step"):
 			continue
 
+		# Sub-type determination is based on what properties are available.
+		# First match wins.
 		var section_keys := config.get_section_keys(section_name)
+		var step: Step = null
+
 		if "custom_resolver" in section_keys:
-			var step := CustomStep.new()
+			step = CustomStep.new()
 			step.script_code = String(config.get_value(section_name, "custom_resolver", "")).strip_edges()
 
 			if step.script_code.is_empty():
-				print("EIS: Resolver step '%s' is marked as custom but has no code." % [ section_name ])
+				print("EIS: Resolver step '%s' (custom) has no code." % [ section_name ])
 				success = false
 				continue
 
-			resolver_steps.push_back(step)
+		elif "type_name" in section_keys:
+			step = TypeStep.new()
+			step.type_name = String(config.get_value(section_name, "type_name", "")).strip_edges()
+			step.type_index = config.get_value(section_name, "type_index", 0)
+
+			if step.type_index < 0:
+				step.type_index = 0
+
+			if not ClassDB.class_exists(step.type_name):
+				print("EIS: Resolver step '%s' (type) has invalid type name (%s)." % [ section_name, step.type_name ])
+				success = false
+				continue
+
+		elif "child_index" in section_keys:
+			step = IndexStep.new()
+			step.child_index = config.get_value(section_name, "child_index", 0)
+
+			if step.child_index < 0:
+				step.child_index = 0
+
+		step.step_key = section_name
+		resolver_steps.push_back(step)
 
 	return success
 
 
-# Step subtypes.
+# Step sub-types.
 
 class Step:
-	pass
+	var step_key: String = ""
 
 
 class CustomStep extends Step:
 	var script_code: String = ""
+
+
+class TypeStep extends Step:
+	var type_name: String = ""
+	var type_index: int = 0
+
+
+class IndexStep extends Step:
+	var child_index: int = 0

@@ -1,0 +1,10 @@
+description = "
+The container node for main views/context.
+"
+node_type = "VBoxContainer"
+base_reference = ""
+
+[resolver_step.1]
+custom_resolver = "
+EditorInterface.get_editor_main_screen()
+"

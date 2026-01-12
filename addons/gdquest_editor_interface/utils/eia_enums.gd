@@ -51,7 +51,9 @@ enum NPDocks { # 200_000
 }
 
 enum NPCanvasEditor { # 1_000_000
-
+	CANVAS_ITEM_EDITOR = 1_000_001,
+	CANVAS_ITEM_EDITOR_VIEWPORT,
+	CANVAS_ITEM_EDITOR_TOOLBAR,
 }
 
 enum NPSpatialEditor { # 2_000_000
