@@ -82,47 +82,8 @@ func _parse_steps(config: ConfigFile) -> bool:
 # Step subtypes.
 
 class Step:
-	func resolve(_base_node: Node) -> Node:
-		return null
+	pass
 
 
 class CustomStep extends Step:
 	var script_code: String = ""
-
-
-	func resolve(base_node: Node) -> Node:
-		var script_lines := script_code.split("\n")
-		if script_lines.is_empty():
-			return null
-
-		var last_line := script_lines[-1]
-		if not last_line.begins_with("return "):
-			script_lines[-1] = "return %s" % [ last_line ]
-
-		var script_text := """
-@tool
-extends RefCounted
-
-func _custom_resolve(base_node: Node) -> Node:
-"""
-
-		for line in script_lines:
-			script_text += "\t" + line + "\n"
-
-		script_text += """
-	pass # Safely end the method body.
-"""
-
-		var script := GDScript.new()
-		script.source_code = script_text
-		var script_status := script.reload()
-		if script_status != OK:
-			print("EIS: Custom resolver code is invalid and failed to run.")
-			return null
-
-		var script_instance = script.new()
-		if not script_instance.has_method("_custom_resolve"):
-			print("EIS: Custom resolver code is invalid and failed to run (_custom_resolve() method not found).")
-			return
-
-		return script_instance.call("_custom_resolve", base_node)
