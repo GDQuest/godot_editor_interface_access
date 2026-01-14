@@ -1,12 +1,9 @@
 ## Enums used by the editor interface access system.
 @tool
 
-# Node point enums are split into meaningful major groups to
-# make it easier to manage them. Values are enumerated continuously
-# and should not conflict between enums. Sufficient padding is
-# given to ensure that.
+enum NodePoint {
+	# 0 - General.
 
-enum NPGeneral { # 0
 	# Core/root nodes.
 	EDITOR_MAIN_WINDOW = 1,
 	EDITOR_NODE = 100,
@@ -40,63 +37,62 @@ enum NPGeneral { # 0
 	# Misc.
 	RENDERING_MODE_SWITCHER = 10_000,
 	DISTRACTION_FREE_BUTTON,
-}
 
-enum NPDialogs { # 100_000
+	# 100_000 - Dialogs.
 
-}
+	# 200_000 - Docks.
 
-enum NPDocks { # 200_000
+	# 1_000_000 - Canvas editor.
 
-}
-
-enum NPCanvasEditor { # 1_000_000
 	CANVAS_ITEM_EDITOR = 1_000_001,
 	CANVAS_ITEM_EDITOR_VIEWPORT,
+
 	CANVAS_ITEM_EDITOR_TOOLBAR,
-}
+	CANVAS_ITEM_EDITOR_TOOLBAR_SELECT_BUTTON,
+	CANVAS_ITEM_EDITOR_TOOLBAR_MOVE_BUTTON,
+	CANVAS_ITEM_EDITOR_TOOLBAR_ROTATE_BUTTON,
+	CANVAS_ITEM_EDITOR_TOOLBAR_SCALE_BUTTON,
+	CANVAS_ITEM_EDITOR_TOOLBAR_SELECTABLE_BUTTON,
+	CANVAS_ITEM_EDITOR_TOOLBAR_PIVOT_BUTTON,
+	CANVAS_ITEM_EDITOR_TOOLBAR_PAN_BUTTON,
+	CANVAS_ITEM_EDITOR_TOOLBAR_RULER_BUTTON,
+	CANVAS_ITEM_EDITOR_TOOLBAR_SMART_SNAP_BUTTON,
+	CANVAS_ITEM_EDITOR_TOOLBAR_GRID_BUTTON,
+	CANVAS_ITEM_EDITOR_TOOLBAR_SNAP_OPTIONS_BUTTON,
+	CANVAS_ITEM_EDITOR_TOOLBAR_LOCK_BUTTON,
+	CANVAS_ITEM_EDITOR_TOOLBAR_UNLOCK_BUTTON,
+	CANVAS_ITEM_EDITOR_TOOLBAR_GROUP_BUTTON,
+	CANVAS_ITEM_EDITOR_TOOLBAR_UNGROUP_BUTTON,
+	CANVAS_ITEM_EDITOR_TOOLBAR_SKELETON_OPTIONS_BUTTON,
 
-enum NPSpatialEditor { # 2_000_000
+	# 2_000_000 - Spatial editor.
 
-}
 
-enum NPScriptEditor { # 3_000_000
+	# 3_000_000 - Script editor.
 
-}
 
-enum NPGameView { # 4_000_000
+	# 4_000_000 - Game view.
 
-}
 
-enum NPAssetLibrary { # 5_000_000
-
+	# 5_000_000 - Asset library.
 }
 
 
 # Utilities.
 
-static var _enum_value_map: Dictionary[int, String] = {}
+static var _node_point_name_map: Dictionary[int, String] = {}
 
 
 static func _static_init() -> void:
-	var enum_map := (new().get_script() as Script).get_script_constant_map()
-	for enum_name: String in enum_map:
-		for enum_key: String in enum_map[enum_name]:
-			_enum_value_map[enum_map[enum_name][enum_key]] = enum_name
+	_node_point_name_map.clear()
+
+	for key: String in NodePoint:
+		var value: int = NodePoint[key]
+		_node_point_name_map[value] = key.to_pascal_case()
 
 
-## Reflection method that returns the enum value key for the given enum and value.
-static func get_enum_key(enum_type: Dictionary, enum_value: int) -> String:
-	var enum_key := enum_type.find_key(enum_value)
-	if not enum_key:
+static func get_node_point_name(value: int) -> String:
+	if not _node_point_name_map.has(value):
 		return ""
 
-	return String(enum_key)
-
-
-## Reflection method that returns the enum name for the given enum value.
-static func get_enum_name(enum_value: int) -> String:
-	if not _enum_value_map.has(enum_value):
-		return ""
-
-	return _enum_value_map[enum_value]
+	return _node_point_name_map[value]

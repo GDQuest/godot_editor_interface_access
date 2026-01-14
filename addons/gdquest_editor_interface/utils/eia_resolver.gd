@@ -4,26 +4,37 @@
 ## definition, this utility will cascadingly resolve all of them.
 @tool
 
+const Enums := preload("./eia_enums.gd")
 const Definition := preload("./eia_definition.gd")
 
 const LIBRARY_ROOT := "../library"
-const LIBRARY_EXT := "def"
 
-static var _node_cache: Dictionary[int, Node] = {}
+static var _library_cache: Array[GDScript] = []
+static var _library_definition_map: Dictionary[String, GDScript] = {}
+static var _node_cache: Dictionary[Enums.NodePoint, Node] = {}
 
 
-static func resolve(node_group: String, node_key: String, node_point: int, skip_cache: bool = false) -> Node:
+static func _static_init() -> void:
+	_reload_node_point_definitions()
+
+
+static func resolve(node_point: Enums.NodePoint, skip_cache: bool = false) -> Node:
 	if _node_cache.has(node_point):
 		return _node_cache[node_point]
 
-	var definition := _get_node_point_definition(node_group, node_key, node_point)
+	var node_point_name := Enums.get_node_point_name(node_point)
+	if node_point_name.is_empty():
+		printerr("EIA: Unknown node point value (%d)." % [ node_point ])
+		return null
+
+	var definition := _get_node_point_definition(node_point_name)
 	if not definition:
-		print("EIA: Failed to load node point definition (%s, %s, %d)." % [ node_group, node_key, node_point ])
+		printerr("EIA: Unknown node point definition (%s)." % [ node_point_name ])
 		return null
 
 	var current_node: Node = null
-	if definition.base_reference_point != -1:
-		current_node = resolve(definition.base_reference_group, definition.base_reference_key, definition.base_reference_point, skip_cache)
+	if definition.base_reference != -1:
+		current_node = resolve(definition.base_reference, skip_cache)
 
 	for step in definition.resolver_steps:
 		if step is Definition.CustomStep:
@@ -34,12 +45,15 @@ static func resolve(node_group: String, node_key: String, node_point: int, skip_
 			current_node = _resolve_index_step(step, current_node)
 
 		else:
+			printerr("EIA: Unknown resolver step type (%s)." % [ step ])
 			current_node = null
 
 	if current_node:
 		var current_node_type := current_node.get_class()
-		if not ClassDB.is_parent_class(current_node_type, definition.node_type):
-			print("EIA: Resolved node (%s) doesn't match or inherit expected type (%s)." % [ current_node_type, definition.node_type ])
+		var expected_node_type := definition.node_type
+
+		if not ClassDB.is_parent_class(current_node_type, expected_node_type):
+			printerr("EIA: Resolved node (%s) doesn't match or inherit expected type (%s)." % [ current_node_type, expected_node_type ])
 			return null
 
 	if not skip_cache && current_node:
@@ -50,39 +64,61 @@ static func resolve(node_group: String, node_key: String, node_point: int, skip_
 
 # Helpers.
 
-static func _get_node_point_definition(node_group: String, node_key: String, node_point: int) -> Definition:
+static func _reload_node_point_definitions() -> void:
+	_library_cache.clear()
+	_library_definition_map.clear()
+
 	var library_root := _get_library_root()
-
-	var folder_name := node_group.to_snake_case().trim_prefix("np_")
-	var file_name := "%s.%s" % [ node_key.to_lower(), LIBRARY_EXT ]
-	var file_path := folder_name.path_join(file_name)
-
 	var fs := DirAccess.open(library_root)
 	var error := DirAccess.get_open_error()
 	if error != OK:
-		print("EIA: Failed to open library root for reading (code %d)." % [ error ])
-		return null
+		printerr("EIA: Failed to open library root for reading (code %d)." % [ error ])
+		return
 
-	if not fs.file_exists(file_path):
-		print("EIA: Definition file at '%s' doesn't exist." % [ file_path ])
-		return null
-
-	var config := ConfigFile.new()
-	error = config.load(library_root.path_join(file_path))
+	error = fs.list_dir_begin()
 	if error != OK:
-		print("EIA: Failed to load definition file at '%s' (code %d)." % [ file_path, error ])
+		printerr("EIA: Failed to start library root listing (code %d)." % [ error ])
+		return
+
+	# Automatically load every GDScript file from the library folder.
+	var file_name := fs.get_next()
+	while not file_name.is_empty():
+		if not file_name.ends_with(".gd"):
+			file_name = fs.get_next()
+			continue
+
+		var script_path := library_root.path_join(file_name)
+		var script: GDScript = load(script_path)
+		if not script:
+			printerr("EIA: Failed to load library file at '%s'." % [ script_path ])
+			file_name = fs.get_next()
+			continue
+
+		# Keep a reference around so it doesn't get freed by accident.
+		_library_cache.push_back(script)
+
+		# Get all inner classes via the constant map.
+		for name: String in script.get_script_constant_map():
+			if script[name].get_base_script() != Definition:
+				continue
+
+			# Classes have a suffix to avoid naming collisions, but enums do not
+			# because they are public API of this library.
+			var clean_name := name.trim_suffix("Def")
+			_library_definition_map[clean_name] = script[name]
+
+		file_name = fs.get_next()
+
+
+static func _get_node_point_definition(name: String) -> Definition:
+	if not _library_definition_map.has(name):
 		return null
 
-	var definition := Definition.new()
-	if not definition.parse(config):
-		print("EIA: Failed to parse definition file at '%s'." % [ file_path ])
-		return null
-
-	return definition
+	return _library_definition_map[name].new()
 
 
-## A simple hack to get current path from a static context.
 static func _get_library_root() -> String:
+	## HACK: A simple hack to get current path from a static context.
 	var library_root := (Definition as Script).resource_path
 	library_root = library_root.get_base_dir()
 	library_root = library_root.path_join(LIBRARY_ROOT)
@@ -119,13 +155,13 @@ func _custom_resolve(base_node: Node) -> Node:
 	script.source_code = script_text
 	var script_status := script.reload()
 	if script_status != OK:
-		print("EIS: Custom resolver code in step '%s' is invalid and failed to run." % [ step.step_key ])
+		printerr("EIS: Custom resolver code in step '%s' is invalid and failed to run." % [ step.step_key ])
 		return null
 
 	var script_instance = script.new()
 	if not script_instance.has_method("_custom_resolve"):
-		print("EIS: Custom resolver code in step '%s' is invalid and failed to run (_custom_resolve() method not found)." % [ step.step_key ])
-		return
+		printerr("EIS: Custom resolver code in step '%s' is invalid and failed to run (_custom_resolve() method not found)." % [ step.step_key ])
+		return null
 
 	return script_instance.call("_custom_resolve", base_node)
 
@@ -141,7 +177,7 @@ static func _resolve_type_step(step: Definition.TypeStep, base_node: Node) -> No
 			if counter == step.type_index:
 				return child_node
 
-	print("EIS: Type resolver in step '%s' expected to find %d '%s' node(s), but failed." % [ step.step_key, (step.type_index + 1), step.type_name ])
+	printerr("EIS: Type resolver in step '%s' expected to find %d '%s' node(s), but failed." % [ step.step_key, (step.type_index + 1), step.type_name ])
 	return null
 
 
@@ -150,7 +186,7 @@ static func _resolve_index_step(step: Definition.IndexStep, base_node: Node) -> 
 		return null
 
 	if base_node.get_child_count() <= step.child_index:
-		print("EIS: Index resolver in step '%s' expected to find at least %d children, but failed." % [ step.step_key, (step.child_index + 1) ])
+		printerr("EIS: Index resolver in step '%s' expected to find at least %d children, but failed." % [ step.step_key, (step.child_index + 1) ])
 		return null
 
 	return base_node.get_child(step.child_index)
