@@ -47,17 +47,19 @@ static func resolve(node_point: Enums.NodePoint, skip_cache: bool = false) -> No
 	if definition.base_reference != -1:
 		current_node = resolve(definition.base_reference, skip_cache)
 
-	for step in definition.resolver_steps:
+	for i in definition.resolver_steps.size():
+		var step := definition.resolver_steps[i]
+
 		if step.get_script() in _step_resolvers:
 			var resolver_func := _step_resolvers[step.get_script()]
 			if not resolver_func.is_valid():
-				printerr("EIA: Resolver step (%s) has invalid resolver method associated with it." % [ step ])
+				printerr("EIA: Invalid method associated with resolver step type (%s) in step %d." % [ step, i ])
 				current_node = null
 			else:
-				current_node = resolver_func.call(step, current_node)
+				current_node = resolver_func.call(step, i, current_node)
 			continue
 
-		printerr("EIA: Unknown resolver step type (%s)." % [ step ])
+		printerr("EIA: Unknown resolver step type (%s) in step %d." % [ step, i ])
 		current_node = null
 
 	if current_node:
@@ -140,7 +142,7 @@ static func _get_library_root() -> String:
 
 # Step resolvers.
 
-static func _resolve_custom_step(step: Definition.CustomStep, base_node: Node) -> Node:
+static func _resolve_custom_step(step: Definition.CustomStep, step_index: int, base_node: Node) -> Node:
 	var script_lines := step.script_code.split("\n")
 	if script_lines.is_empty():
 		return null
@@ -167,18 +169,18 @@ func _custom_resolve(base_node: Node) -> Node:
 	script.source_code = script_text
 	var script_status := script.reload()
 	if script_status != OK:
-		printerr("EIS: Custom resolver code in step '%s' is invalid and failed to run." % [ step.step_key ])
+		printerr("EIS: Custom resolver code in step %d is invalid and failed to run." % [ step_index ])
 		return null
 
 	var script_instance = script.new()
 	if not script_instance.has_method("_custom_resolve"):
-		printerr("EIS: Custom resolver code in step '%s' is invalid and failed to run (_custom_resolve() method not found)." % [ step.step_key ])
+		printerr("EIS: Custom resolver code in step %d is invalid and failed to run (_custom_resolve() method not found)." % [ step_index ])
 		return null
 
 	return script_instance.call("_custom_resolve", base_node)
 
 
-static func _resolve_child_type_step(step: Definition.ChildTypeStep, base_node: Node) -> Node:
+static func _resolve_child_type_step(step: Definition.ChildTypeStep, step_index: int, base_node: Node) -> Node:
 	if not base_node:
 		return null
 
@@ -189,22 +191,22 @@ static func _resolve_child_type_step(step: Definition.ChildTypeStep, base_node: 
 			if counter == step.type_index:
 				return child_node
 
-	printerr("EIS: Child type resolver in step '%s' expected to find %d '%s' node(s), but failed." % [ step.step_key, (step.type_index + 1), step.type_name ])
+	printerr("EIS: Child type resolver in step %d expected to find %d '%s' node(s), but failed." % [ step_index, (step.type_index + 1), step.type_name ])
 	return null
 
 
-static func _resolve_child_index_step(step: Definition.ChildIndexStep, base_node: Node) -> Node:
+static func _resolve_child_index_step(step: Definition.ChildIndexStep, step_index: int, base_node: Node) -> Node:
 	if not base_node:
 		return null
 
 	if base_node.get_child_count() <= step.child_index:
-		printerr("EIS: Child index resolver in step '%s' expected to find at least %d children, but failed." % [ step.step_key, (step.child_index + 1) ])
+		printerr("EIS: Child index resolver in step %d expected to find at least %d children, but failed." % [ step_index, (step.child_index + 1) ])
 		return null
 
 	return base_node.get_child(step.child_index)
 
 
-static func _resolve_signal_callable_step(step: Definition.SignalCallableStep, base_node: Node) -> Node:
+static func _resolve_signal_callable_step(step: Definition.SignalCallableStep, step_index: int, base_node: Node) -> Node:
 	if not base_node:
 		return null
 
@@ -218,5 +220,5 @@ static func _resolve_signal_callable_step(step: Definition.SignalCallableStep, b
 		if ClassDB.is_parent_class(object_ref.get_class(), step.object_type_name):
 			return object_ref
 
-	printerr("EIS: Signal callable resolver in step '%s' expected to find '%s' node, but failed." % [ step.step_key, step.object_type_name ])
+	printerr("EIS: Signal callable resolver in step %d expected to find '%s' node, but failed." % [ step_index, step.object_type_name ])
 	return null
