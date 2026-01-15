@@ -7,6 +7,8 @@ enum NodePoint {
 	# Core/root nodes.
 	EDITOR_MAIN_WINDOW = 1,
 	EDITOR_NODE = 100,
+	EDITOR_FILE_SYSTEM,
+
 	EDITOR_BASE_CONTROL = 1000,
 
 	# Editor menu bar.
@@ -41,6 +43,13 @@ enum NodePoint {
 	# 100_000 - Dialogs.
 
 	# 200_000 - Docks.
+
+	FILE_SYSTEM_DOCK = 201_000,
+	IMPORT_DOCK = 202_000,
+	HISTORY_DOCK = 203_000,
+	SCENE_DOCK = 204_000,
+	INSPECTOR_DOCK = 205_000,
+	NODE_DOCK = 206_000,
 
 	# 1_000_000 - Canvas editor.
 

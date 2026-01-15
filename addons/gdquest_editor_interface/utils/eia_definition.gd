@@ -25,7 +25,7 @@ class CustomStep extends Step:
 		script_code = code.strip_edges()
 
 
-class TypeStep extends Step:
+class ChildTypeStep extends Step:
 	var type_name: String = ""
 	var type_index: int = 0
 
@@ -34,8 +34,17 @@ class TypeStep extends Step:
 		type_index = index
 
 
-class IndexStep extends Step:
+class ChildIndexStep extends Step:
 	var child_index: int = 0
 
 	func _init(index: int = 0) -> void:
 		child_index = index
+
+
+class SignalCallableStep extends Step:
+	var signal_name: String = ""
+	var object_type_name: String = ""
+
+	func _init(name: String = "", type: String = "") -> void:
+		signal_name = name
+		object_type_name = type

@@ -11,5 +11,5 @@ class CanvasItemEditorDef extends Definition:
 		base_reference = Enums.NodePoint.MAIN_CONTEXT_CONTAINER
 
 		resolver_steps = [
-			Definition.TypeStep.new("CanvasItemEditor"),
+			Definition.ChildTypeStep.new("CanvasItemEditor"),
 		]

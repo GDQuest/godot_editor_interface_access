@@ -13,6 +13,13 @@ static var _library_cache: Array[GDScript] = []
 static var _library_definition_map: Dictionary[String, GDScript] = {}
 static var _node_cache: Dictionary[Enums.NodePoint, Node] = {}
 
+static var _step_resolvers: Dictionary[GDScript, Callable] = {
+	Definition.CustomStep:              _resolve_custom_step,
+	Definition.ChildTypeStep:           _resolve_child_type_step,
+	Definition.ChildIndexStep:          _resolve_child_index_step,
+	Definition.SignalCallableStep:      _resolve_signal_callable_step,
+}
+
 
 static func _static_init() -> void:
 	_reload_node_point_definitions()
@@ -32,21 +39,26 @@ static func resolve(node_point: Enums.NodePoint, skip_cache: bool = false) -> No
 		printerr("EIA: Unknown node point definition (%s)." % [ node_point_name ])
 		return null
 
+	if definition.resolver_steps.is_empty():
+		printerr("EIA: Node point definition (%s) has no resolver steps." % [ node_point_name ])
+		return null
+
 	var current_node: Node = null
 	if definition.base_reference != -1:
 		current_node = resolve(definition.base_reference, skip_cache)
 
 	for step in definition.resolver_steps:
-		if step is Definition.CustomStep:
-			current_node = _resolve_custom_step(step, current_node)
-		elif step is Definition.TypeStep:
-			current_node = _resolve_type_step(step, current_node)
-		elif step is Definition.IndexStep:
-			current_node = _resolve_index_step(step, current_node)
+		if step.get_script() in _step_resolvers:
+			var resolver_func := _step_resolvers[step.get_script()]
+			if not resolver_func.is_valid():
+				printerr("EIA: Resolver step (%s) has invalid resolver method associated with it." % [ step ])
+				current_node = null
+			else:
+				current_node = resolver_func.call(step, current_node)
+			continue
 
-		else:
-			printerr("EIA: Unknown resolver step type (%s)." % [ step ])
-			current_node = null
+		printerr("EIA: Unknown resolver step type (%s)." % [ step ])
+		current_node = null
 
 	if current_node:
 		var current_node_type := current_node.get_class()
@@ -166,7 +178,7 @@ func _custom_resolve(base_node: Node) -> Node:
 	return script_instance.call("_custom_resolve", base_node)
 
 
-static func _resolve_type_step(step: Definition.TypeStep, base_node: Node) -> Node:
+static func _resolve_child_type_step(step: Definition.ChildTypeStep, base_node: Node) -> Node:
 	if not base_node:
 		return null
 
@@ -177,16 +189,34 @@ static func _resolve_type_step(step: Definition.TypeStep, base_node: Node) -> No
 			if counter == step.type_index:
 				return child_node
 
-	printerr("EIS: Type resolver in step '%s' expected to find %d '%s' node(s), but failed." % [ step.step_key, (step.type_index + 1), step.type_name ])
+	printerr("EIS: Child type resolver in step '%s' expected to find %d '%s' node(s), but failed." % [ step.step_key, (step.type_index + 1), step.type_name ])
 	return null
 
 
-static func _resolve_index_step(step: Definition.IndexStep, base_node: Node) -> Node:
+static func _resolve_child_index_step(step: Definition.ChildIndexStep, base_node: Node) -> Node:
 	if not base_node:
 		return null
 
 	if base_node.get_child_count() <= step.child_index:
-		printerr("EIS: Index resolver in step '%s' expected to find at least %d children, but failed." % [ step.step_key, (step.child_index + 1) ])
+		printerr("EIS: Child index resolver in step '%s' expected to find at least %d children, but failed." % [ step.step_key, (step.child_index + 1) ])
 		return null
 
 	return base_node.get_child(step.child_index)
+
+
+static func _resolve_signal_callable_step(step: Definition.SignalCallableStep, base_node: Node) -> Node:
+	if not base_node:
+		return null
+
+	var signal_ref: Signal = base_node[step.signal_name]
+	if not signal_ref:
+		return null
+
+	for connection_info in signal_ref.get_connections():
+		var object_ref := (connection_info["callable"] as Callable).get_object()
+
+		if ClassDB.is_parent_class(object_ref.get_class(), step.object_type_name):
+			return object_ref
+
+	printerr("EIS: Signal callable resolver in step '%s' expected to find '%s' node, but failed." % [ step.step_key, step.object_type_name ])
+	return null
