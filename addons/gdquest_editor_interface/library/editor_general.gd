@@ -9,9 +9,9 @@ class EditorMainWindowDef extends Definition:
 	func _init() -> void:
 		node_type = "Window"
 
-		var custom_script := """
-EditorInterface.get_base_control().get_window()
-"""
+		var custom_script := func(base_node: Node) -> Node:
+			return EditorInterface.get_base_control().get_window()
+
 		resolver_steps = [
 			Definition.CustomStep.new(custom_script),
 		]
@@ -34,9 +34,9 @@ class EditorFileSystemDef extends Definition:
 	func _init() -> void:
 		node_type = "EditorFileSystem"
 
-		var custom_script := """
-EditorInterface.get_resource_filesystem()
-"""
+		var custom_script := func(base_node: Node) -> Node:
+			return EditorInterface.get_resource_filesystem()
+
 		resolver_steps = [
 			Definition.CustomStep.new(custom_script),
 		]
@@ -47,9 +47,9 @@ class MainContextContainerDef extends Definition:
 	func _init() -> void:
 		node_type = "VBoxContainer"
 
-		var custom_script := """
-EditorInterface.get_editor_main_screen()
-"""
+		var custom_script := func(base_node: Node) -> Node:
+			return EditorInterface.get_editor_main_screen()
+
 		resolver_steps = [
 			Definition.CustomStep.new(custom_script),
 		]

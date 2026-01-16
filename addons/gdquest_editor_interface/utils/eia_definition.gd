@@ -19,10 +19,10 @@ class Step:
 
 
 class CustomStep extends Step:
-	var script_code: String = ""
+	var custom_callback: Callable = Callable()
 
-	func _init(code: String = "") -> void:
-		script_code = code.strip_edges()
+	func _init(callback: Callable = Callable()) -> void:
+		custom_callback = callback
 
 
 class ChildTypeStep extends Step:

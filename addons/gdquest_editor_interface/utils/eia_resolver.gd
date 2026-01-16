@@ -143,41 +143,11 @@ static func _get_library_root() -> String:
 # Step resolvers.
 
 static func _resolve_custom_step(step: Definition.CustomStep, step_index: int, base_node: Node) -> Node:
-	var script_lines := step.script_code.split("\n")
-	if script_lines.is_empty():
+	if not step.custom_callback.is_valid():
+		printerr("EIS: Custom resolver in step %d has invalid callback." % [ step_index ])
 		return null
 
-	var last_line := script_lines[-1]
-	if not last_line.begins_with("return "):
-		script_lines[-1] = "return %s" % [ last_line ]
-
-	var script_text := """
-@tool
-extends RefCounted
-
-func _custom_resolve(base_node: Node) -> Node:
-"""
-
-	for line in script_lines:
-		script_text += "\t" + line + "\n"
-
-	script_text += """
-	pass # Safely end the method body.
-"""
-
-	var script := GDScript.new()
-	script.source_code = script_text
-	var script_status := script.reload()
-	if script_status != OK:
-		printerr("EIS: Custom resolver code in step %d is invalid and failed to run." % [ step_index ])
-		return null
-
-	var script_instance = script.new()
-	if not script_instance.has_method("_custom_resolve"):
-		printerr("EIS: Custom resolver code in step %d is invalid and failed to run (_custom_resolve() method not found)." % [ step_index ])
-		return null
-
-	return script_instance.call("_custom_resolve", base_node)
+	return step.custom_callback.call(base_node)
 
 
 static func _resolve_child_type_step(step: Definition.ChildTypeStep, step_index: int, base_node: Node) -> Node:

@@ -8,9 +8,9 @@ class InspectorDockInspectorDef extends Definition:
 	func _init() -> void:
 		node_type = "EditorInspector"
 
-		var custom_script := """
-EditorInterface.get_inspector()
-"""
+		var custom_script := func(base_node: Node) -> Node:
+			return EditorInterface.get_inspector()
+
 		resolver_steps = [
 			Definition.CustomStep.new(custom_script),
 		]
