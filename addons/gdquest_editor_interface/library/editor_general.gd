@@ -42,14 +42,39 @@ class EditorFileSystemDef extends Definition:
 		]
 
 
-## The container node for main views/context.
-class MainContextContainerDef extends Definition:
+## Editor export manager object, which happens to be a node
+## (likely for processing).
+class EditorExportDef extends Definition:
 	func _init() -> void:
-		node_type = "VBoxContainer"
+		node_type = "EditorExport"
+		base_reference = Enums.NodePoint.EDITOR_NODE
+
+		resolver_steps = [
+			Definition.ChildTypeStep.new("EditorExport"),
+		]
+
+
+## Root Control node for the editor GUI.
+class LayoutRootDef extends Definition:
+	func _init() -> void:
+		node_type = "Panel"
 
 		var custom_script := func(base_node: Node) -> Node:
-			return EditorInterface.get_editor_main_screen()
+			return EditorInterface.get_base_control()
 
 		resolver_steps = [
 			Definition.CustomStep.new(custom_script),
+		]
+
+
+class LayoutTitleBarDef extends Definition:
+	func _init() -> void:
+		node_type = "EditorTitleBar"
+		base_reference = Enums.NodePoint.LAYOUT_ROOT
+
+		# Parent node can be either VBoxContainer or HBoxContainer, depending on platform,
+		# but title bar is always directly there.
+		resolver_steps = [
+			Definition.ChildIndexStep.new(0),
+			Definition.ChildTypeStep.new("EditorTitleBar"),
 		]

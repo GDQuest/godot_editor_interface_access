@@ -21,3 +21,26 @@ static func get_node_static(node_point: Enums.NodePoint) -> Node:
 ## to the node cache. Existing cache records are respected.
 static func get_node_dynamic(node_point: Enums.NodePoint) -> Node:
 	return Resolver.resolve(node_point, true)
+
+
+# Testing.
+
+## Runs resolve (without cache) for every defined node point.
+static func test_resolve() -> void:
+	print("EIA: Running resolve test...")
+	print("----------------------------")
+
+	var total_count := Enums.NodePoint.size()
+	var valid_count := 0
+
+	for key: String in Enums.NodePoint:
+		print("\t%s:" % [ key ])
+
+		var node_point: int = Enums.NodePoint[key]
+		var node := Resolver.resolve(node_point, true)
+		if node:
+			valid_count += 1
+			print("\t\tOK")
+
+	print("----------------------------")
+	print("EIA: Resolved nodes: %d / %d" % [ valid_count, total_count ])

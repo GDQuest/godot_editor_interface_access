@@ -4,6 +4,16 @@ const Enums := preload("../utils/eia_enums.gd")
 const Definition := preload("../utils/eia_definition.gd")
 
 
+class InspectorDockDef extends Definition:
+	func _init() -> void:
+		node_type = "InspectorDock"
+		base_reference = Enums.NodePoint.FILE_SYSTEM_DOCK
+
+		resolver_steps = [
+			Definition.SignalCallableStep.new("files_moved", "InspectorDock"),
+		]
+
+
 class InspectorDockInspectorDef extends Definition:
 	func _init() -> void:
 		node_type = "EditorInspector"

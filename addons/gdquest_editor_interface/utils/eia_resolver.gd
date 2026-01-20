@@ -17,6 +17,9 @@ static var _step_resolvers: Dictionary[GDScript, Callable] = {
 	Definition.CustomStep:              _resolve_custom_step,
 	Definition.ChildTypeStep:           _resolve_child_type_step,
 	Definition.ChildIndexStep:          _resolve_child_index_step,
+	Definition.FindTypeStep:            _resolve_find_type_step,
+	Definition.NodePathStep:            _resolve_node_path_step,
+	Definition.ParentCountStep:         _resolve_parent_count_step,
 	Definition.SignalCallableStep:      _resolve_signal_callable_step,
 }
 
@@ -174,6 +177,44 @@ static func _resolve_child_index_step(step: Definition.ChildIndexStep, step_inde
 		return null
 
 	return base_node.get_child(step.child_index)
+
+
+static func _resolve_find_type_step(step: Definition.FindTypeStep, step_index: int, base_node: Node) -> Node:
+	if not base_node:
+		return null
+
+	var found_nodes := base_node.find_children("*", step.type_name, true, false)
+	if found_nodes.size() <= step.type_index:
+		printerr("EIS: Find type resolver in step %d expected to find %d '%s' node(s), but failed." % [ step_index, (step.type_index + 1), step.type_name ])
+		return null
+
+	return found_nodes[step.type_index]
+
+
+static func _resolve_node_path_step(step: Definition.NodePathStep, step_index: int, base_node: Node) -> Node:
+	if not base_node:
+		return null
+
+	var fetched_node := base_node.get_node_or_null(step.node_path)
+	if not fetched_node:
+		printerr("EIS: Node path resolver in step %d expected to find a node at '%s', but failed." % [ step_index, step.node_path ])
+		return null
+
+	return fetched_node
+
+
+static func _resolve_parent_count_step(step: Definition.ParentCountStep, step_index: int, base_node: Node) -> Node:
+	if not base_node:
+		return null
+
+	var current_node: Node = base_node
+	for i in step.parent_count:
+		current_node = current_node.get_parent()
+		if not current_node:
+			printerr("EIS: Parent count resolver in step %d expected to find %d parent nodes, but failed." % [ step_index, step.parent_count ])
+			return null
+
+	return current_node
 
 
 static func _resolve_signal_callable_step(step: Definition.SignalCallableStep, step_index: int, base_node: Node) -> Node:
