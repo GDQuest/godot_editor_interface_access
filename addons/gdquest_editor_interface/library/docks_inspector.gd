@@ -1,20 +1,20 @@
 @tool
 
 const Enums := preload("../utils/eia_enums.gd")
-const Definition := preload("../utils/eia_definition.gd")
+const Types := preload("../utils/eia_types.gd")
 
 
-class InspectorDockDef extends Definition:
+class InspectorDockDef extends Types.Definition:
 	func _init() -> void:
 		node_type = "InspectorDock"
 		base_reference = Enums.NodePoint.FILE_SYSTEM_DOCK
 
 		resolver_steps = [
-			Definition.SignalCallableStep.new("files_moved", "InspectorDock"),
+			Types.SignalCallableStep.new("files_moved", "InspectorDock"),
 		]
 
 
-class InspectorDockInspectorDef extends Definition:
+class InspectorDockInspectorDef extends Types.Definition:
 	func _init() -> void:
 		node_type = "EditorInspector"
 
@@ -22,38 +22,38 @@ class InspectorDockInspectorDef extends Definition:
 			return EditorInterface.get_inspector()
 
 		resolver_steps = [
-			Definition.CustomStep.new(custom_script),
+			Types.CustomStep.new(custom_script),
 		]
 
 
-class InspectorDockInspectorBeginBoxDef extends Definition:
+class InspectorDockInspectorBeginBoxDef extends Types.Definition:
 	func _init() -> void:
 		node_type = "VBoxContainer"
 		base_reference = Enums.NodePoint.INSPECTOR_DOCK_INSPECTOR
 
 		resolver_steps = [
-			Definition.ChildIndexStep.new(0),
-			Definition.ChildTypeStep.new("VBoxContainer", 0)
+			Types.ChildIndexStep.new(0),
+			Types.ChildTypeStep.new("VBoxContainer", 0)
 		]
 
 
-class InspectorDockInspectorFavoritesDef extends Definition:
+class InspectorDockInspectorFavoritesDef extends Types.Definition:
 	func _init() -> void:
 		node_type = "VBoxContainer"
 		base_reference = Enums.NodePoint.INSPECTOR_DOCK_INSPECTOR
 
 		resolver_steps = [
-			Definition.ChildIndexStep.new(0),
-			Definition.ChildTypeStep.new("VBoxContainer", 1)
+			Types.ChildIndexStep.new(0),
+			Types.ChildTypeStep.new("VBoxContainer", 1)
 		]
 
 
-class InspectorDockInspectorPropertiesDef extends Definition:
+class InspectorDockInspectorPropertiesDef extends Types.Definition:
 	func _init() -> void:
 		node_type = "VBoxContainer"
 		base_reference = Enums.NodePoint.INSPECTOR_DOCK_INSPECTOR
 
 		resolver_steps = [
-			Definition.ChildIndexStep.new(0),
-			Definition.ChildTypeStep.new("VBoxContainer", 2)
+			Types.ChildIndexStep.new(0),
+			Types.ChildTypeStep.new("VBoxContainer", 2)
 		]

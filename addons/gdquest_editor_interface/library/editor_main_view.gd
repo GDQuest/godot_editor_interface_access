@@ -1,84 +1,84 @@
 @tool
 
 const Enums := preload("../utils/eia_enums.gd")
-const Definition := preload("../utils/eia_definition.gd")
+const Types := preload("../utils/eia_types.gd")
 
 
 ## Main view switcher container, where 2D, 3D, Script, etc
 ## buttons live.
-class MainViewSwitcherDef extends Definition:
+class MainViewSwitcherDef extends Types.Definition:
 	func _init() -> void:
 		node_type = "HBoxContainer"
 		base_reference = Enums.NodePoint.LAYOUT_TITLE_BAR
 
 		resolver_steps = [
-			Definition.NodePathStep.new("EditorMainScreenButtons"),
+			Types.NodePathStep.new("EditorMainScreenButtons"),
 		]
 
 
-class MainViewSwitcher2dButtonDef extends Definition:
+class MainViewSwitcher2dButtonDef extends Types.Definition:
 	func _init() -> void:
 		node_type = "Button"
 		base_reference = Enums.NodePoint.MAIN_VIEW_SWITCHER
 
 		resolver_steps = [
-			Definition.NodePathStep.new("2D")
+			Types.NodePathStep.new("2D")
 		]
 
 
-class MainViewSwitcher3dButtonDef extends Definition:
+class MainViewSwitcher3dButtonDef extends Types.Definition:
 	func _init() -> void:
 		node_type = "Button"
 		base_reference = Enums.NodePoint.MAIN_VIEW_SWITCHER
 
 		resolver_steps = [
-			Definition.NodePathStep.new("3D")
+			Types.NodePathStep.new("3D")
 		]
 
 
-class MainViewSwitcherScriptButtonDef extends Definition:
+class MainViewSwitcherScriptButtonDef extends Types.Definition:
 	func _init() -> void:
 		node_type = "Button"
 		base_reference = Enums.NodePoint.MAIN_VIEW_SWITCHER
 
 		resolver_steps = [
-			Definition.NodePathStep.new("Script")
+			Types.NodePathStep.new("Script")
 		]
 
 
-class MainViewSwitcherGameButtonDef extends Definition:
+class MainViewSwitcherGameButtonDef extends Types.Definition:
 	func _init() -> void:
 		node_type = "Button"
 		base_reference = Enums.NodePoint.MAIN_VIEW_SWITCHER
 
 		resolver_steps = [
-			Definition.NodePathStep.new("Game")
+			Types.NodePathStep.new("Game")
 		]
 
 
-class MainViewSwitcherAssetLibButtonDef extends Definition:
+class MainViewSwitcherAssetLibButtonDef extends Types.Definition:
 	func _init() -> void:
 		node_type = "Button"
 		base_reference = Enums.NodePoint.MAIN_VIEW_SWITCHER
 
 		resolver_steps = [
-			Definition.NodePathStep.new("AssetLib")
+			Types.NodePathStep.new("AssetLib")
 		]
 
 
 ## Container node for main views.
-class MainViewContainerDef extends Definition:
+class MainViewContainerDef extends Types.Definition:
 	func _init() -> void:
 		node_type = "EditorMainScreen"
 		base_reference = Enums.NodePoint.MAIN_VIEW_CONTAINER_BOX
 
 		resolver_steps = [
-			Definition.ParentCountStep.new(1),
+			Types.ParentCountStep.new(1),
 		]
 
 
 ## Box layout container for main view panels.
-class MainViewContainerBoxDef extends Definition:
+class MainViewContainerBoxDef extends Types.Definition:
 	func _init() -> void:
 		node_type = "VBoxContainer"
 
@@ -86,5 +86,5 @@ class MainViewContainerBoxDef extends Definition:
 			return EditorInterface.get_editor_main_screen()
 
 		resolver_steps = [
-			Definition.CustomStep.new(custom_script),
+			Types.CustomStep.new(custom_script),
 		]

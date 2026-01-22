@@ -1,14 +1,14 @@
 @tool
 
 const Enums := preload("../utils/eia_enums.gd")
-const Definition := preload("../utils/eia_definition.gd")
+const Types := preload("../utils/eia_types.gd")
 
 
-class RunBarDef extends Definition:
+class RunBarDef extends Types.Definition:
 	func _init() -> void:
 		node_type = "EditorRunBar"
 		base_reference = Enums.NodePoint.LAYOUT_TITLE_BAR
 
 		resolver_steps = [
-			Definition.ChildTypeStep.new("EditorRunBar"),
+			Types.ChildTypeStep.new("EditorRunBar"),
 		]

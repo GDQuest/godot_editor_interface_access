@@ -2,17 +2,33 @@
 
 const Enums := preload("./eia_enums.gd")
 
-# Definition properties.
+### Definition sub-types ###
 
-# NOTE: Built-in types can be stored directly (as a GDScriptNativeClass
-# object), but that doesn't work for some valid types which are not exposed
-# to scripting, like CanvasItemEditor.
-var node_type: String = "Node"
-var base_reference: int = -1
-var resolver_steps: Array[Step] = []
+class Definition:
+	# NOTE: Built-in types can be stored directly (as a GDScriptNativeClass
+	# object), but that doesn't work for some valid types which are not exposed
+	# to scripting, like CanvasItemEditor.
+	var node_type: String = "Node"
+	var base_reference: int = -1
+	var resolver_steps: Array[Step] = []
 
 
-# Step sub-types.
+# TODO: Add multi-definitions for resolving several nodes in one go.
+#   - Pass an array of nodes in steps instead of just one.
+#   - Define an array of node points that the definition returns, in order.
+#   - For regular step types use them as a mapping function for each array element.
+#   - Add a custom multi step with a callable that takes plural nodes and returns plural nodes.
+#
+# This should help with cases where multiple base locations are possible
+# for the target node, as well as resolving toolbars and such, which is
+# easier to do in one go (and nodes might depend on each other for heuristics).
+#
+# One multi-definition needs to be created for the entire bunch, but also
+# sub-types that extend it (with no changes) for each target node must
+# be added.
+
+
+### Step sub-types. ###
 
 class Step:
 	pass

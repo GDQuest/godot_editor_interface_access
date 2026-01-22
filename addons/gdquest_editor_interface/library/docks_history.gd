@@ -1,14 +1,14 @@
 @tool
 
 const Enums := preload("../utils/eia_enums.gd")
-const Definition := preload("../utils/eia_definition.gd")
+const Types := preload("../utils/eia_types.gd")
 
 
-class HistoryDockDef extends Definition:
+class HistoryDockDef extends Types.Definition:
 	func _init() -> void:
 		node_type = "HistoryDock"
 		base_reference = Enums.NodePoint.EDITOR_NODE
 
 		resolver_steps = [
-			Definition.SignalCallableStep.new("scene_changed", "HistoryDock"),
+			Types.SignalCallableStep.new("scene_changed", "HistoryDock"),
 		]

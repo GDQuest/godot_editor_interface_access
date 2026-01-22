@@ -1,11 +1,11 @@
 @tool
 
 const Enums := preload("../utils/eia_enums.gd")
-const Definition := preload("../utils/eia_definition.gd")
+const Types := preload("../utils/eia_types.gd")
 
 
 ## The main Window node of the editor, the root node.
-class EditorMainWindowDef extends Definition:
+class EditorMainWindowDef extends Types.Definition:
 	func _init() -> void:
 		node_type = "Window"
 
@@ -13,24 +13,24 @@ class EditorMainWindowDef extends Definition:
 			return EditorInterface.get_base_control().get_window()
 
 		resolver_steps = [
-			Definition.CustomStep.new(custom_script),
+			Types.CustomStep.new(custom_script),
 		]
 
 
 ## Main logical node of the editor.
-class EditorNodeDef extends Definition:
+class EditorNodeDef extends Types.Definition:
 	func _init() -> void:
 		node_type = "EditorNode"
 		base_reference = Enums.NodePoint.EDITOR_MAIN_WINDOW
 
 		resolver_steps = [
-			Definition.ChildTypeStep.new("EditorNode"),
+			Types.ChildTypeStep.new("EditorNode"),
 		]
 
 
 ## Editor virtual file system object, which happens to be a node
 ## (likely for processing).
-class EditorFileSystemDef extends Definition:
+class EditorFileSystemDef extends Types.Definition:
 	func _init() -> void:
 		node_type = "EditorFileSystem"
 
@@ -38,24 +38,24 @@ class EditorFileSystemDef extends Definition:
 			return EditorInterface.get_resource_filesystem()
 
 		resolver_steps = [
-			Definition.CustomStep.new(custom_script),
+			Types.CustomStep.new(custom_script),
 		]
 
 
 ## Editor export manager object, which happens to be a node
 ## (likely for processing).
-class EditorExportDef extends Definition:
+class EditorExportDef extends Types.Definition:
 	func _init() -> void:
 		node_type = "EditorExport"
 		base_reference = Enums.NodePoint.EDITOR_NODE
 
 		resolver_steps = [
-			Definition.ChildTypeStep.new("EditorExport"),
+			Types.ChildTypeStep.new("EditorExport"),
 		]
 
 
 ## Root Control node for the editor GUI.
-class LayoutRootDef extends Definition:
+class LayoutRootDef extends Types.Definition:
 	func _init() -> void:
 		node_type = "Panel"
 
@@ -63,11 +63,11 @@ class LayoutRootDef extends Definition:
 			return EditorInterface.get_base_control()
 
 		resolver_steps = [
-			Definition.CustomStep.new(custom_script),
+			Types.CustomStep.new(custom_script),
 		]
 
 
-class LayoutTitleBarDef extends Definition:
+class LayoutTitleBarDef extends Types.Definition:
 	func _init() -> void:
 		node_type = "EditorTitleBar"
 		base_reference = Enums.NodePoint.LAYOUT_ROOT
@@ -75,6 +75,6 @@ class LayoutTitleBarDef extends Definition:
 		# Parent node can be either VBoxContainer or HBoxContainer, depending on platform,
 		# but title bar is always directly there.
 		resolver_steps = [
-			Definition.ChildIndexStep.new(0),
-			Definition.ChildTypeStep.new("EditorTitleBar"),
+			Types.ChildIndexStep.new(0),
+			Types.ChildTypeStep.new("EditorTitleBar"),
 		]

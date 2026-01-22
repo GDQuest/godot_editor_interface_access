@@ -1,145 +1,145 @@
 @tool
 
 const Enums := preload("../utils/eia_enums.gd")
-const Definition := preload("../utils/eia_definition.gd")
+const Types := preload("../utils/eia_types.gd")
 
 
-class EditorSettingsDialogDef extends Definition:
+class EditorSettingsDialogDef extends Types.Definition:
 	func _init() -> void:
 		node_type = "EditorSettingsDialog"
 		base_reference = Enums.NodePoint.LAYOUT_ROOT
 
 		resolver_steps = [
-			Definition.ChildTypeStep.new("EditorSettingsDialog")
+			Types.ChildTypeStep.new("EditorSettingsDialog")
 		]
 
 
-class ProjectSettingsDialogDef extends Definition:
+class ProjectSettingsDialogDef extends Types.Definition:
 	func _init() -> void:
 		node_type = "ProjectSettingsEditor"
 		base_reference = Enums.NodePoint.LAYOUT_ROOT
 
 		resolver_steps = [
-			Definition.ChildTypeStep.new("ProjectSettingsEditor")
+			Types.ChildTypeStep.new("ProjectSettingsEditor")
 		]
 
 
-class ProjectExportDialogDef extends Definition:
+class ProjectExportDialogDef extends Types.Definition:
 	func _init() -> void:
 		node_type = "ProjectExportDialog"
 		base_reference = Enums.NodePoint.LAYOUT_ROOT
 
 		resolver_steps = [
-			Definition.ChildTypeStep.new("ProjectExportDialog")
+			Types.ChildTypeStep.new("ProjectExportDialog")
 		]
 
 
-class ExportTemplateManagerDef extends Definition:
+class ExportTemplateManagerDef extends Types.Definition:
 	func _init() -> void:
 		node_type = "ExportTemplateManager"
 		base_reference = Enums.NodePoint.LAYOUT_ROOT
 
 		resolver_steps = [
-			Definition.ChildTypeStep.new("ExportTemplateManager")
+			Types.ChildTypeStep.new("ExportTemplateManager")
 		]
 
 
-class FeatureProfileManagerDef extends Definition:
+class FeatureProfileManagerDef extends Types.Definition:
 	func _init() -> void:
 		node_type = "EditorFeatureProfileManager"
 		base_reference = Enums.NodePoint.LAYOUT_ROOT
 
 		resolver_steps = [
-			Definition.ChildTypeStep.new("EditorFeatureProfileManager")
+			Types.ChildTypeStep.new("EditorFeatureProfileManager")
 		]
 
 
-class BuildProfileManagerDef extends Definition:
+class BuildProfileManagerDef extends Types.Definition:
 	func _init() -> void:
 		node_type = "EditorBuildProfileManager"
 		base_reference = Enums.NodePoint.LAYOUT_ROOT
 
 		resolver_steps = [
-			Definition.ChildTypeStep.new("EditorBuildProfileManager")
+			Types.ChildTypeStep.new("EditorBuildProfileManager")
 		]
 
 
-class EditorAboutDialogDef extends Definition:
+class EditorAboutDialogDef extends Types.Definition:
 	func _init() -> void:
 		node_type = "EditorAbout"
 		base_reference = Enums.NodePoint.LAYOUT_ROOT
 
 		resolver_steps = [
-			Definition.ChildTypeStep.new("EditorAbout")
+			Types.ChildTypeStep.new("EditorAbout")
 		]
 
 
-class OrphanResourcesDialogDef extends Definition:
+class OrphanResourcesDialogDef extends Types.Definition:
 	func _init() -> void:
 		node_type = "OrphanResourcesDialog"
 		base_reference = Enums.NodePoint.LAYOUT_ROOT
 
 		resolver_steps = [
-			Definition.ChildTypeStep.new("OrphanResourcesDialog")
+			Types.ChildTypeStep.new("OrphanResourcesDialog")
 		]
 
 
-class DependencyEditorDialogDef extends Definition:
+class DependencyEditorDialogDef extends Types.Definition:
 	func _init() -> void:
 		node_type = "DependencyEditor"
 		base_reference = Enums.NodePoint.LAYOUT_ROOT
 
 		resolver_steps = [
-			Definition.ChildTypeStep.new("DependencyEditor")
+			Types.ChildTypeStep.new("DependencyEditor")
 		]
 
 
-class DependencyErrorDialogDef extends Definition:
+class DependencyErrorDialogDef extends Types.Definition:
 	func _init() -> void:
 		node_type = "DependencyErrorDialog"
 		base_reference = Enums.NodePoint.LAYOUT_ROOT
 
 		resolver_steps = [
-			Definition.ChildTypeStep.new("DependencyErrorDialog")
+			Types.ChildTypeStep.new("DependencyErrorDialog")
 		]
 
 
-class ImportSceneSettingsDialogDef extends Definition:
+class ImportSceneSettingsDialogDef extends Types.Definition:
 	func _init() -> void:
 		node_type = "SceneImportSettingsDialog"
 		base_reference = Enums.NodePoint.LAYOUT_ROOT
 
 		resolver_steps = [
-			Definition.ChildTypeStep.new("SceneImportSettingsDialog")
+			Types.ChildTypeStep.new("SceneImportSettingsDialog")
 		]
 
 
-class ImportAudioStreamSettingsDialogDef extends Definition:
+class ImportAudioStreamSettingsDialogDef extends Types.Definition:
 	func _init() -> void:
 		node_type = "AudioStreamImportSettingsDialog"
 		base_reference = Enums.NodePoint.LAYOUT_ROOT
 
 		resolver_steps = [
-			Definition.ChildTypeStep.new("AudioStreamImportSettingsDialog")
+			Types.ChildTypeStep.new("AudioStreamImportSettingsDialog")
 		]
 
 
-class ImportDynamicFontSettingsDialogDef extends Definition:
+class ImportDynamicFontSettingsDialogDef extends Types.Definition:
 	func _init() -> void:
 		node_type = "DynamicFontImportSettingsDialog"
 		base_reference = Enums.NodePoint.LAYOUT_ROOT
 
 		resolver_steps = [
-			Definition.ChildTypeStep.new("DynamicFontImportSettingsDialog")
+			Types.ChildTypeStep.new("DynamicFontImportSettingsDialog")
 		]
 
 
 ## NOTE: Not available in Android and Web builds.
-class FbxImporterManagerDef extends Definition:
+class FbxImporterManagerDef extends Types.Definition:
 	func _init() -> void:
 		node_type = "FBXImporterManager"
 		base_reference = Enums.NodePoint.LAYOUT_ROOT
 
 		resolver_steps = [
-			Definition.ChildTypeStep.new("FBXImporterManager")
+			Types.ChildTypeStep.new("FBXImporterManager")
 		]

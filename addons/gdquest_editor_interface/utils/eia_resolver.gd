@@ -5,7 +5,7 @@
 @tool
 
 const Enums := preload("./eia_enums.gd")
-const Definition := preload("./eia_definition.gd")
+const Types := preload("./eia_types.gd")
 
 const LIBRARY_ROOT := "../library"
 
@@ -14,13 +14,13 @@ static var _library_definition_map: Dictionary[String, GDScript] = {}
 static var _node_cache: Dictionary[Enums.NodePoint, Node] = {}
 
 static var _step_resolvers: Dictionary[GDScript, Callable] = {
-	Definition.CustomStep:              _resolve_custom_step,
-	Definition.ChildTypeStep:           _resolve_child_type_step,
-	Definition.ChildIndexStep:          _resolve_child_index_step,
-	Definition.FindTypeStep:            _resolve_find_type_step,
-	Definition.NodePathStep:            _resolve_node_path_step,
-	Definition.ParentCountStep:         _resolve_parent_count_step,
-	Definition.SignalCallableStep:      _resolve_signal_callable_step,
+	Types.CustomStep:              _resolve_custom_step,
+	Types.ChildTypeStep:           _resolve_child_type_step,
+	Types.ChildIndexStep:          _resolve_child_index_step,
+	Types.FindTypeStep:            _resolve_find_type_step,
+	Types.NodePathStep:            _resolve_node_path_step,
+	Types.ParentCountStep:         _resolve_parent_count_step,
+	Types.SignalCallableStep:      _resolve_signal_callable_step,
 }
 
 
@@ -116,7 +116,7 @@ static func _reload_node_point_definitions() -> void:
 
 		# Get all inner classes via the constant map.
 		for name: String in script.get_script_constant_map():
-			if script[name].get_base_script() != Definition:
+			if script[name].get_base_script() != Types.Definition:
 				continue
 
 			# Classes have a suffix to avoid naming collisions, but enums do not
@@ -127,7 +127,7 @@ static func _reload_node_point_definitions() -> void:
 		file_name = fs.get_next()
 
 
-static func _get_node_point_definition(name: String) -> Definition:
+static func _get_node_point_definition(name: String) -> Types.Definition:
 	if not _library_definition_map.has(name):
 		return null
 
@@ -136,7 +136,7 @@ static func _get_node_point_definition(name: String) -> Definition:
 
 static func _get_library_root() -> String:
 	## HACK: A simple hack to get current path from a static context.
-	var library_root := (Definition as Script).resource_path
+	var library_root := (Types as Script).resource_path
 	library_root = library_root.get_base_dir()
 	library_root = library_root.path_join(LIBRARY_ROOT)
 
@@ -145,7 +145,7 @@ static func _get_library_root() -> String:
 
 # Step resolvers.
 
-static func _resolve_custom_step(step: Definition.CustomStep, step_index: int, base_node: Node) -> Node:
+static func _resolve_custom_step(step: Types.CustomStep, step_index: int, base_node: Node) -> Node:
 	if not step.custom_callback.is_valid():
 		printerr("EIS: Custom resolver in step %d has invalid callback." % [ step_index ])
 		return null
@@ -153,7 +153,7 @@ static func _resolve_custom_step(step: Definition.CustomStep, step_index: int, b
 	return step.custom_callback.call(base_node)
 
 
-static func _resolve_child_type_step(step: Definition.ChildTypeStep, step_index: int, base_node: Node) -> Node:
+static func _resolve_child_type_step(step: Types.ChildTypeStep, step_index: int, base_node: Node) -> Node:
 	if not base_node:
 		return null
 
@@ -168,7 +168,7 @@ static func _resolve_child_type_step(step: Definition.ChildTypeStep, step_index:
 	return null
 
 
-static func _resolve_child_index_step(step: Definition.ChildIndexStep, step_index: int, base_node: Node) -> Node:
+static func _resolve_child_index_step(step: Types.ChildIndexStep, step_index: int, base_node: Node) -> Node:
 	if not base_node:
 		return null
 
@@ -179,7 +179,7 @@ static func _resolve_child_index_step(step: Definition.ChildIndexStep, step_inde
 	return base_node.get_child(step.child_index)
 
 
-static func _resolve_find_type_step(step: Definition.FindTypeStep, step_index: int, base_node: Node) -> Node:
+static func _resolve_find_type_step(step: Types.FindTypeStep, step_index: int, base_node: Node) -> Node:
 	if not base_node:
 		return null
 
@@ -191,7 +191,7 @@ static func _resolve_find_type_step(step: Definition.FindTypeStep, step_index: i
 	return found_nodes[step.type_index]
 
 
-static func _resolve_node_path_step(step: Definition.NodePathStep, step_index: int, base_node: Node) -> Node:
+static func _resolve_node_path_step(step: Types.NodePathStep, step_index: int, base_node: Node) -> Node:
 	if not base_node:
 		return null
 
@@ -203,7 +203,7 @@ static func _resolve_node_path_step(step: Definition.NodePathStep, step_index: i
 	return fetched_node
 
 
-static func _resolve_parent_count_step(step: Definition.ParentCountStep, step_index: int, base_node: Node) -> Node:
+static func _resolve_parent_count_step(step: Types.ParentCountStep, step_index: int, base_node: Node) -> Node:
 	if not base_node:
 		return null
 
@@ -217,7 +217,7 @@ static func _resolve_parent_count_step(step: Definition.ParentCountStep, step_in
 	return current_node
 
 
-static func _resolve_signal_callable_step(step: Definition.SignalCallableStep, step_index: int, base_node: Node) -> Node:
+static func _resolve_signal_callable_step(step: Types.SignalCallableStep, step_index: int, base_node: Node) -> Node:
 	if not base_node:
 		return null
 
