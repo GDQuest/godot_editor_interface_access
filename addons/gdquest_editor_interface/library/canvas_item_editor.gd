@@ -1,7 +1,7 @@
 @tool
 
 const Enums := preload("../utils/eia_enums.gd")
-const Types := preload("../utils/eia_types.gd")
+const Types := preload("../utils/eia_resolver_types.gd")
 
 
 ## The root node of the canvas item editor (main 2D view).
@@ -11,7 +11,7 @@ class CanvasItemEditorDef extends Types.Definition:
 		base_reference = Enums.NodePoint.MAIN_VIEW_CONTAINER_BOX
 
 		resolver_steps = [
-			Types.ChildTypeStep.new("CanvasItemEditor"),
+			Types.GetChildTypeStep.new("CanvasItemEditor"),
 		]
 
 
@@ -22,9 +22,9 @@ class CanvasItemEditorToolbarDef extends Types.Definition:
 		base_reference = Enums.NodePoint.CANVAS_ITEM_EDITOR
 
 		resolver_steps = [
-			Types.ChildIndexStep.new(0),
-			Types.ChildIndexStep.new(0),
-			Types.ChildIndexStep.new(0),
+			Types.GetChildIndexStep.new(0),
+			Types.GetChildIndexStep.new(0),
+			Types.GetChildIndexStep.new(0),
 		]
 
 
@@ -34,7 +34,7 @@ class CanvasItemEditorToolbarSelectButtonDef extends Types.Definition:
 		base_reference = Enums.NodePoint.CANVAS_ITEM_EDITOR_TOOLBAR
 
 		resolver_steps = [
-			Types.ChildTypeStep.new("Button", 0)
+			Types.GetChildTypeStep.new("Button", 0)
 		]
 
 
@@ -44,7 +44,7 @@ class CanvasItemEditorToolbarMoveButtonDef extends Types.Definition:
 		base_reference = Enums.NodePoint.CANVAS_ITEM_EDITOR_TOOLBAR
 
 		resolver_steps = [
-			Types.ChildTypeStep.new("Button", 1)
+			Types.GetChildTypeStep.new("Button", 1)
 		]
 
 
@@ -54,7 +54,7 @@ class CanvasItemEditorToolbarRotateButtonDef extends Types.Definition:
 		base_reference = Enums.NodePoint.CANVAS_ITEM_EDITOR_TOOLBAR
 
 		resolver_steps = [
-			Types.ChildTypeStep.new("Button", 2)
+			Types.GetChildTypeStep.new("Button", 2)
 		]
 
 
@@ -64,7 +64,7 @@ class CanvasItemEditorToolbarScaleButtonDef extends Types.Definition:
 		base_reference = Enums.NodePoint.CANVAS_ITEM_EDITOR_TOOLBAR
 
 		resolver_steps = [
-			Types.ChildTypeStep.new("Button", 3)
+			Types.GetChildTypeStep.new("Button", 3)
 		]
 
 
@@ -74,7 +74,7 @@ class CanvasItemEditorToolbarSelectableButtonDef extends Types.Definition:
 		base_reference = Enums.NodePoint.CANVAS_ITEM_EDITOR_TOOLBAR
 
 		resolver_steps = [
-			Types.ChildTypeStep.new("Button", 4)
+			Types.GetChildTypeStep.new("Button", 4)
 		]
 
 
@@ -84,7 +84,7 @@ class CanvasItemEditorToolbarPivotButtonDef extends Types.Definition:
 		base_reference = Enums.NodePoint.CANVAS_ITEM_EDITOR_TOOLBAR
 
 		resolver_steps = [
-			Types.ChildTypeStep.new("Button", 5)
+			Types.GetChildTypeStep.new("Button", 5)
 		]
 
 
@@ -94,7 +94,7 @@ class CanvasItemEditorToolbarPanButtonDef extends Types.Definition:
 		base_reference = Enums.NodePoint.CANVAS_ITEM_EDITOR_TOOLBAR
 
 		resolver_steps = [
-			Types.ChildTypeStep.new("Button", 6)
+			Types.GetChildTypeStep.new("Button", 6)
 		]
 
 
@@ -104,7 +104,7 @@ class CanvasItemEditorToolbarRulerButtonDef extends Types.Definition:
 		base_reference = Enums.NodePoint.CANVAS_ITEM_EDITOR_TOOLBAR
 
 		resolver_steps = [
-			Types.ChildTypeStep.new("Button", 7)
+			Types.GetChildTypeStep.new("Button", 7)
 		]
 
 
@@ -114,7 +114,7 @@ class CanvasItemEditorToolbarSmartSnapButtonDef extends Types.Definition:
 		base_reference = Enums.NodePoint.CANVAS_ITEM_EDITOR_TOOLBAR
 
 		resolver_steps = [
-			Types.ChildTypeStep.new("Button", 8)
+			Types.GetChildTypeStep.new("Button", 8)
 		]
 
 
@@ -124,7 +124,7 @@ class CanvasItemEditorToolbarGridButtonDef extends Types.Definition:
 		base_reference = Enums.NodePoint.CANVAS_ITEM_EDITOR_TOOLBAR
 
 		resolver_steps = [
-			Types.ChildTypeStep.new("Button", 9)
+			Types.GetChildTypeStep.new("Button", 9)
 		]
 
 
@@ -134,7 +134,7 @@ class CanvasItemEditorToolbarSnapOptionsButtonDef extends Types.Definition:
 		base_reference = Enums.NodePoint.CANVAS_ITEM_EDITOR_TOOLBAR
 
 		resolver_steps = [
-			Types.ChildTypeStep.new("Button", 10)
+			Types.GetChildTypeStep.new("Button", 10)
 		]
 
 
@@ -144,7 +144,7 @@ class CanvasItemEditorToolbarLockButtonDef extends Types.Definition:
 		base_reference = Enums.NodePoint.CANVAS_ITEM_EDITOR_TOOLBAR
 
 		resolver_steps = [
-			Types.ChildTypeStep.new("Button", 11)
+			Types.GetChildTypeStep.new("Button", 11)
 		]
 
 
@@ -154,7 +154,7 @@ class CanvasItemEditorToolbarUnlockButtonDef extends Types.Definition:
 		base_reference = Enums.NodePoint.CANVAS_ITEM_EDITOR_TOOLBAR
 
 		resolver_steps = [
-			Types.ChildTypeStep.new("Button", 12)
+			Types.GetChildTypeStep.new("Button", 12)
 		]
 
 
@@ -164,7 +164,7 @@ class CanvasItemEditorToolbarGroupButtonDef extends Types.Definition:
 		base_reference = Enums.NodePoint.CANVAS_ITEM_EDITOR_TOOLBAR
 
 		resolver_steps = [
-			Types.ChildTypeStep.new("Button", 13)
+			Types.GetChildTypeStep.new("Button", 13)
 		]
 
 
@@ -174,7 +174,7 @@ class CanvasItemEditorToolbarUngroupButtonDef extends Types.Definition:
 		base_reference = Enums.NodePoint.CANVAS_ITEM_EDITOR_TOOLBAR
 
 		resolver_steps = [
-			Types.ChildTypeStep.new("Button", 14)
+			Types.GetChildTypeStep.new("Button", 14)
 		]
 
 
@@ -184,5 +184,5 @@ class CanvasItemEditorToolbarSkeletonOptionsButtonDef extends Types.Definition:
 		base_reference = Enums.NodePoint.CANVAS_ITEM_EDITOR_TOOLBAR
 
 		resolver_steps = [
-			Types.ChildTypeStep.new("Button", 15)
+			Types.GetChildTypeStep.new("Button", 15)
 		]

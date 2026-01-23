@@ -1,7 +1,7 @@
 @tool
 
 const Enums := preload("../utils/eia_enums.gd")
-const Types := preload("../utils/eia_types.gd")
+const Types := preload("../utils/eia_resolver_types.gd")
 
 
 class InspectorDockDef extends Types.Definition:
@@ -10,7 +10,7 @@ class InspectorDockDef extends Types.Definition:
 		base_reference = Enums.NodePoint.FILE_SYSTEM_DOCK
 
 		resolver_steps = [
-			Types.SignalCallableStep.new("files_moved", "InspectorDock"),
+			Types.GetSignalCallableStep.new("files_moved", "InspectorDock"),
 		]
 
 
@@ -22,7 +22,7 @@ class InspectorDockInspectorDef extends Types.Definition:
 			return EditorInterface.get_inspector()
 
 		resolver_steps = [
-			Types.CustomStep.new(custom_script),
+			Types.DoCustomStep.new(custom_script),
 		]
 
 
@@ -32,8 +32,8 @@ class InspectorDockInspectorBeginBoxDef extends Types.Definition:
 		base_reference = Enums.NodePoint.INSPECTOR_DOCK_INSPECTOR
 
 		resolver_steps = [
-			Types.ChildIndexStep.new(0),
-			Types.ChildTypeStep.new("VBoxContainer", 0)
+			Types.GetChildIndexStep.new(0),
+			Types.GetChildTypeStep.new("VBoxContainer", 0)
 		]
 
 
@@ -43,8 +43,8 @@ class InspectorDockInspectorFavoritesDef extends Types.Definition:
 		base_reference = Enums.NodePoint.INSPECTOR_DOCK_INSPECTOR
 
 		resolver_steps = [
-			Types.ChildIndexStep.new(0),
-			Types.ChildTypeStep.new("VBoxContainer", 1)
+			Types.GetChildIndexStep.new(0),
+			Types.GetChildTypeStep.new("VBoxContainer", 1)
 		]
 
 
@@ -54,6 +54,6 @@ class InspectorDockInspectorPropertiesDef extends Types.Definition:
 		base_reference = Enums.NodePoint.INSPECTOR_DOCK_INSPECTOR
 
 		resolver_steps = [
-			Types.ChildIndexStep.new(0),
-			Types.ChildTypeStep.new("VBoxContainer", 2)
+			Types.GetChildIndexStep.new(0),
+			Types.GetChildTypeStep.new("VBoxContainer", 2)
 		]

@@ -1,7 +1,7 @@
 @tool
 
 const Enums := preload("../utils/eia_enums.gd")
-const Types := preload("../utils/eia_types.gd")
+const Types := preload("../utils/eia_resolver_types.gd")
 
 
 class SceneTabsDef extends Types.Definition:
@@ -10,8 +10,8 @@ class SceneTabsDef extends Types.Definition:
 		base_reference = Enums.NodePoint.MAIN_VIEW_CONTAINER
 
 		resolver_steps = [
-			Types.ParentCountStep.new(1),
-			Types.ChildTypeStep.new("EditorSceneTabs")
+			Types.GetParentCountStep.new(1),
+			Types.GetChildTypeStep.new("EditorSceneTabs")
 		]
 
 
@@ -21,7 +21,7 @@ class SceneTabsTabBarDef extends Types.Definition:
 		base_reference = Enums.NodePoint.SCENE_TABS
 
 		resolver_steps = [
-			Types.FindTypeStep.new("TabBar"),
+			Types.FindNodeTypeStep.new("TabBar"),
 		]
 
 
@@ -31,5 +31,5 @@ class SceneTabsAddButtonDef extends Types.Definition:
 		base_reference = Enums.NodePoint.SCENE_TABS_TAB_BAR
 
 		resolver_steps = [
-			Types.ChildTypeStep.new("Button"),
+			Types.GetChildTypeStep.new("Button"),
 		]

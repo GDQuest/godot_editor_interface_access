@@ -1,7 +1,7 @@
 @tool
 
 const Enums := preload("../utils/eia_enums.gd")
-const Types := preload("../utils/eia_types.gd")
+const Types := preload("../utils/eia_resolver_types.gd")
 
 
 class RunBarDef extends Types.Definition:
@@ -10,5 +10,5 @@ class RunBarDef extends Types.Definition:
 		base_reference = Enums.NodePoint.LAYOUT_TITLE_BAR
 
 		resolver_steps = [
-			Types.ChildTypeStep.new("EditorRunBar"),
+			Types.GetChildTypeStep.new("EditorRunBar"),
 		]

@@ -1,7 +1,7 @@
 @tool
 
 const Enums := preload("../utils/eia_enums.gd")
-const Types := preload("../utils/eia_types.gd")
+const Types := preload("../utils/eia_resolver_types.gd")
 
 
 ## Main view switcher container, where 2D, 3D, Script, etc
@@ -12,7 +12,7 @@ class MainViewSwitcherDef extends Types.Definition:
 		base_reference = Enums.NodePoint.LAYOUT_TITLE_BAR
 
 		resolver_steps = [
-			Types.NodePathStep.new("EditorMainScreenButtons"),
+			Types.GetNodePathStep.new("EditorMainScreenButtons"),
 		]
 
 
@@ -22,7 +22,7 @@ class MainViewSwitcher2dButtonDef extends Types.Definition:
 		base_reference = Enums.NodePoint.MAIN_VIEW_SWITCHER
 
 		resolver_steps = [
-			Types.NodePathStep.new("2D")
+			Types.GetNodePathStep.new("2D")
 		]
 
 
@@ -32,7 +32,7 @@ class MainViewSwitcher3dButtonDef extends Types.Definition:
 		base_reference = Enums.NodePoint.MAIN_VIEW_SWITCHER
 
 		resolver_steps = [
-			Types.NodePathStep.new("3D")
+			Types.GetNodePathStep.new("3D")
 		]
 
 
@@ -42,7 +42,7 @@ class MainViewSwitcherScriptButtonDef extends Types.Definition:
 		base_reference = Enums.NodePoint.MAIN_VIEW_SWITCHER
 
 		resolver_steps = [
-			Types.NodePathStep.new("Script")
+			Types.GetNodePathStep.new("Script")
 		]
 
 
@@ -52,7 +52,7 @@ class MainViewSwitcherGameButtonDef extends Types.Definition:
 		base_reference = Enums.NodePoint.MAIN_VIEW_SWITCHER
 
 		resolver_steps = [
-			Types.NodePathStep.new("Game")
+			Types.GetNodePathStep.new("Game")
 		]
 
 
@@ -62,7 +62,7 @@ class MainViewSwitcherAssetLibButtonDef extends Types.Definition:
 		base_reference = Enums.NodePoint.MAIN_VIEW_SWITCHER
 
 		resolver_steps = [
-			Types.NodePathStep.new("AssetLib")
+			Types.GetNodePathStep.new("AssetLib")
 		]
 
 
@@ -73,7 +73,7 @@ class MainViewContainerDef extends Types.Definition:
 		base_reference = Enums.NodePoint.MAIN_VIEW_CONTAINER_BOX
 
 		resolver_steps = [
-			Types.ParentCountStep.new(1),
+			Types.GetParentCountStep.new(1),
 		]
 
 
@@ -86,5 +86,5 @@ class MainViewContainerBoxDef extends Types.Definition:
 			return EditorInterface.get_editor_main_screen()
 
 		resolver_steps = [
-			Types.CustomStep.new(custom_script),
+			Types.DoCustomStep.new(custom_script),
 		]

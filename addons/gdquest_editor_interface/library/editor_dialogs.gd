@@ -1,7 +1,7 @@
 @tool
 
 const Enums := preload("../utils/eia_enums.gd")
-const Types := preload("../utils/eia_types.gd")
+const Types := preload("../utils/eia_resolver_types.gd")
 
 
 class EditorSettingsDialogDef extends Types.Definition:
@@ -10,7 +10,7 @@ class EditorSettingsDialogDef extends Types.Definition:
 		base_reference = Enums.NodePoint.LAYOUT_ROOT
 
 		resolver_steps = [
-			Types.ChildTypeStep.new("EditorSettingsDialog")
+			Types.GetChildTypeStep.new("EditorSettingsDialog")
 		]
 
 
@@ -20,7 +20,7 @@ class ProjectSettingsDialogDef extends Types.Definition:
 		base_reference = Enums.NodePoint.LAYOUT_ROOT
 
 		resolver_steps = [
-			Types.ChildTypeStep.new("ProjectSettingsEditor")
+			Types.GetChildTypeStep.new("ProjectSettingsEditor")
 		]
 
 
@@ -30,7 +30,7 @@ class ProjectExportDialogDef extends Types.Definition:
 		base_reference = Enums.NodePoint.LAYOUT_ROOT
 
 		resolver_steps = [
-			Types.ChildTypeStep.new("ProjectExportDialog")
+			Types.GetChildTypeStep.new("ProjectExportDialog")
 		]
 
 
@@ -40,7 +40,7 @@ class ExportTemplateManagerDef extends Types.Definition:
 		base_reference = Enums.NodePoint.LAYOUT_ROOT
 
 		resolver_steps = [
-			Types.ChildTypeStep.new("ExportTemplateManager")
+			Types.GetChildTypeStep.new("ExportTemplateManager")
 		]
 
 
@@ -50,7 +50,7 @@ class FeatureProfileManagerDef extends Types.Definition:
 		base_reference = Enums.NodePoint.LAYOUT_ROOT
 
 		resolver_steps = [
-			Types.ChildTypeStep.new("EditorFeatureProfileManager")
+			Types.GetChildTypeStep.new("EditorFeatureProfileManager")
 		]
 
 
@@ -60,7 +60,7 @@ class BuildProfileManagerDef extends Types.Definition:
 		base_reference = Enums.NodePoint.LAYOUT_ROOT
 
 		resolver_steps = [
-			Types.ChildTypeStep.new("EditorBuildProfileManager")
+			Types.GetChildTypeStep.new("EditorBuildProfileManager")
 		]
 
 
@@ -70,7 +70,7 @@ class EditorAboutDialogDef extends Types.Definition:
 		base_reference = Enums.NodePoint.LAYOUT_ROOT
 
 		resolver_steps = [
-			Types.ChildTypeStep.new("EditorAbout")
+			Types.GetChildTypeStep.new("EditorAbout")
 		]
 
 
@@ -80,7 +80,7 @@ class OrphanResourcesDialogDef extends Types.Definition:
 		base_reference = Enums.NodePoint.LAYOUT_ROOT
 
 		resolver_steps = [
-			Types.ChildTypeStep.new("OrphanResourcesDialog")
+			Types.GetChildTypeStep.new("OrphanResourcesDialog")
 		]
 
 
@@ -90,7 +90,7 @@ class DependencyEditorDialogDef extends Types.Definition:
 		base_reference = Enums.NodePoint.LAYOUT_ROOT
 
 		resolver_steps = [
-			Types.ChildTypeStep.new("DependencyEditor")
+			Types.GetChildTypeStep.new("DependencyEditor")
 		]
 
 
@@ -100,7 +100,7 @@ class DependencyErrorDialogDef extends Types.Definition:
 		base_reference = Enums.NodePoint.LAYOUT_ROOT
 
 		resolver_steps = [
-			Types.ChildTypeStep.new("DependencyErrorDialog")
+			Types.GetChildTypeStep.new("DependencyErrorDialog")
 		]
 
 
@@ -110,7 +110,7 @@ class ImportSceneSettingsDialogDef extends Types.Definition:
 		base_reference = Enums.NodePoint.LAYOUT_ROOT
 
 		resolver_steps = [
-			Types.ChildTypeStep.new("SceneImportSettingsDialog")
+			Types.GetChildTypeStep.new("SceneImportSettingsDialog")
 		]
 
 
@@ -120,7 +120,7 @@ class ImportAudioStreamSettingsDialogDef extends Types.Definition:
 		base_reference = Enums.NodePoint.LAYOUT_ROOT
 
 		resolver_steps = [
-			Types.ChildTypeStep.new("AudioStreamImportSettingsDialog")
+			Types.GetChildTypeStep.new("AudioStreamImportSettingsDialog")
 		]
 
 
@@ -130,7 +130,7 @@ class ImportDynamicFontSettingsDialogDef extends Types.Definition:
 		base_reference = Enums.NodePoint.LAYOUT_ROOT
 
 		resolver_steps = [
-			Types.ChildTypeStep.new("DynamicFontImportSettingsDialog")
+			Types.GetChildTypeStep.new("DynamicFontImportSettingsDialog")
 		]
 
 
@@ -141,5 +141,5 @@ class FbxImporterManagerDef extends Types.Definition:
 		base_reference = Enums.NodePoint.LAYOUT_ROOT
 
 		resolver_steps = [
-			Types.ChildTypeStep.new("FBXImporterManager")
+			Types.GetChildTypeStep.new("FBXImporterManager")
 		]

@@ -1,7 +1,7 @@
 @tool
 
 const Enums := preload("../utils/eia_enums.gd")
-const Types := preload("../utils/eia_types.gd")
+const Types := preload("../utils/eia_resolver_types.gd")
 
 
 ## The main Window node of the editor, the root node.
@@ -13,7 +13,7 @@ class EditorMainWindowDef extends Types.Definition:
 			return EditorInterface.get_base_control().get_window()
 
 		resolver_steps = [
-			Types.CustomStep.new(custom_script),
+			Types.DoCustomStep.new(custom_script),
 		]
 
 
@@ -24,7 +24,7 @@ class EditorNodeDef extends Types.Definition:
 		base_reference = Enums.NodePoint.EDITOR_MAIN_WINDOW
 
 		resolver_steps = [
-			Types.ChildTypeStep.new("EditorNode"),
+			Types.GetChildTypeStep.new("EditorNode"),
 		]
 
 
@@ -38,7 +38,7 @@ class EditorFileSystemDef extends Types.Definition:
 			return EditorInterface.get_resource_filesystem()
 
 		resolver_steps = [
-			Types.CustomStep.new(custom_script),
+			Types.DoCustomStep.new(custom_script),
 		]
 
 
@@ -50,7 +50,7 @@ class EditorExportDef extends Types.Definition:
 		base_reference = Enums.NodePoint.EDITOR_NODE
 
 		resolver_steps = [
-			Types.ChildTypeStep.new("EditorExport"),
+			Types.GetChildTypeStep.new("EditorExport"),
 		]
 
 
@@ -63,7 +63,7 @@ class LayoutRootDef extends Types.Definition:
 			return EditorInterface.get_base_control()
 
 		resolver_steps = [
-			Types.CustomStep.new(custom_script),
+			Types.DoCustomStep.new(custom_script),
 		]
 
 
@@ -75,6 +75,6 @@ class LayoutTitleBarDef extends Types.Definition:
 		# Parent node can be either VBoxContainer or HBoxContainer, depending on platform,
 		# but title bar is always directly there.
 		resolver_steps = [
-			Types.ChildIndexStep.new(0),
-			Types.ChildTypeStep.new("EditorTitleBar"),
+			Types.GetChildIndexStep.new(0),
+			Types.GetChildTypeStep.new("EditorTitleBar"),
 		]

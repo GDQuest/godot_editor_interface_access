@@ -1,7 +1,7 @@
 @tool
 
 const Enums := preload("../utils/eia_enums.gd")
-const Types := preload("../utils/eia_types.gd")
+const Types := preload("../utils/eia_resolver_types.gd")
 
 
 ## Editor's top menu bar (can be a native bar on some platforms).
@@ -11,7 +11,7 @@ class MenuBarDef extends Types.Definition:
 		base_reference = Enums.NodePoint.LAYOUT_TITLE_BAR
 
 		resolver_steps = [
-			Types.ChildTypeStep.new("MenuBar"),
+			Types.GetChildTypeStep.new("MenuBar"),
 		]
 
 
@@ -21,7 +21,7 @@ class MenuBarSceneMenuDef extends Types.Definition:
 		base_reference = Enums.NodePoint.MENU_BAR
 
 		resolver_steps = [
-			Types.NodePathStep.new("Scene"),
+			Types.GetNodePathStep.new("Scene"),
 		]
 
 
@@ -31,7 +31,7 @@ class MenuBarProjectMenuDef extends Types.Definition:
 		base_reference = Enums.NodePoint.MENU_BAR
 
 		resolver_steps = [
-			Types.NodePathStep.new("Project"),
+			Types.GetNodePathStep.new("Project"),
 		]
 
 
@@ -41,7 +41,7 @@ class MenuBarDebugMenuDef extends Types.Definition:
 		base_reference = Enums.NodePoint.MENU_BAR
 
 		resolver_steps = [
-			Types.NodePathStep.new("Debug"),
+			Types.GetNodePathStep.new("Debug"),
 		]
 
 
@@ -51,7 +51,7 @@ class MenuBarEditorMenuDef extends Types.Definition:
 		base_reference = Enums.NodePoint.MENU_BAR
 
 		resolver_steps = [
-			Types.NodePathStep.new("Editor"),
+			Types.GetNodePathStep.new("Editor"),
 		]
 
 
@@ -61,5 +61,5 @@ class MenuBarHelpMenuDef extends Types.Definition:
 		base_reference = Enums.NodePoint.MENU_BAR
 
 		resolver_steps = [
-			Types.NodePathStep.new("Help"),
+			Types.GetNodePathStep.new("Help"),
 		]
