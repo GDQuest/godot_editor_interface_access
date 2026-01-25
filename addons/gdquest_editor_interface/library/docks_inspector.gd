@@ -10,7 +10,7 @@ class InspectorDockDef extends Types.Definition:
 		base_reference = Enums.NodePoint.FILE_SYSTEM_DOCK
 
 		resolver_steps = [
-			Types.GetSignalCallableStep.new("files_moved", "InspectorDock"),
+			Types.GetSignalTypeStep.new("files_moved", "InspectorDock"),
 		]
 
 

@@ -1,3 +1,6 @@
+## Types used by the node point resolver utility. These server as base types
+## for specific node point definitions and provide ready-made resolver steps
+## used by said definitions.
 @tool
 
 const Enums := preload("./eia_enums.gd")
@@ -10,30 +13,27 @@ class Definition:
 	# NOTE: Built-in types can be stored directly (as a GDScriptNativeClass
 	# object), but that doesn't work for some valid types which are not exposed
 	# to scripting, like CanvasItemEditor.
+
+	## Expected node type of the last resolved node. Can be any valid ClassDB
+	## type.
 	var node_type: String = "Node"
+	## Base node point value from which the resolver should start. Can be
+	## -1 if no base reference is needed (then the first step must be a
+	## custom one).
 	var base_reference: int = -1
+	## Steps for the resolver to transform the base reference into the
+	## target node or nodes.
 	var resolver_steps: Array[Step] = []
 
 
-# TODO: Add multi-definitions for resolving several nodes in one go.
-#   - Pass an array of nodes in steps instead of just one.
-#   - Define an array of node points that the definition returns, in order.
-#   - For regular step types use them as a mapping function for each array element.
-#   - Add a custom multi step with a callable that takes plural nodes and returns plural nodes.
-#
-# This should help with cases where multiple base locations are possible
-# for the target node, as well as resolving toolbars and such, which is
-# easier to do in one go (and nodes might depend on each other for heuristics).
-#
-# One multi-definition needs to be created for the entire bunch, but also
-# sub-types that extend it (with no changes) for each target node must
-# be added.
-
 ## Multi-node definition that allows to resolve several nodes
 ## together in one go. Resolver steps operate on an array of nodes.
-## The final step must return an array that maps to the node_type_map
-## property.
+## The final step must return an array that maps exactly to the
+## node_type_map property.
 class MultiDefinition extends Definition:
+	## Mapping between node point values and expected resulting node types.
+	## Replaces the node_type property in multi-node definitions, and also
+	## establishes the shape of the resulting array.
 	var node_type_map: Dictionary[Enums.NodePoint, String] = {}
 
 
@@ -195,7 +195,7 @@ class GetParentCountStep extends Step:
 
 ## Finds a node using previous node's signal and the specified
 ## connected object type.
-class GetSignalCallableStep extends Step:
+class GetSignalTypeStep extends Step:
 	var signal_name: String = ""
 	var object_type_name: String = ""
 
@@ -209,6 +209,7 @@ class GetSignalCallableStep extends Step:
 
 		var signal_ref: Signal = base_node[signal_name]
 		if not signal_ref:
+			push_error("[EIA] Step %d: Expected node to have signal '%s'." % [ step_index, signal_name ])
 			return null
 
 		for connection_info in signal_ref.get_connections():
@@ -224,7 +225,7 @@ class GetSignalCallableStep extends Step:
 # Validating steps operate on the same node reference and return
 # null if it doesn't satisfy the condition.
 
-## Checks if the given node has the specified editor icon.
+## Checks if the current node has the specified editor icon.
 class HasEditorIconStep extends Step:
 	var icon_name: String = ""
 
@@ -251,3 +252,32 @@ class HasEditorIconStep extends Step:
 			return null
 
 		return base_node
+
+
+## Checks if the current node has the specified callable connected
+## to the specified signal.
+class HasSignalCallableStep extends Step:
+	var signal_name: String = ""
+	var callable_name: String = ""
+
+	func _init(name: String, callable: String) -> void:
+		signal_name = name
+		callable_name = callable
+
+	func resolve(base_node: Node, step_index: int = 0) -> Node:
+		if not base_node:
+			return null
+
+		var signal_ref: Signal = base_node[signal_name]
+		if not signal_ref:
+			push_error("[EIA] Step %d: Expected node to have signal '%s'." % [ step_index, signal_name ])
+			return null
+
+		for connection_info in signal_ref.get_connections():
+			var method_name := (connection_info["callable"] as Callable).get_method()
+
+			if method_name == callable_name:
+				return base_node
+
+		push_error("[EIA] Step %d: Expected callable '%s' connected to signal '%s'." % [ step_index, callable_name, signal_name ])
+		return null

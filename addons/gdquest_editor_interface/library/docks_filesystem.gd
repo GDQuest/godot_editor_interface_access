@@ -10,5 +10,5 @@ class FileSystemDockDef extends Types.Definition:
 		base_reference = Enums.NodePoint.EDITOR_FILE_SYSTEM
 
 		resolver_steps = [
-			Types.GetSignalCallableStep.new("filesystem_changed", "FileSystemDock"),
+			Types.GetSignalTypeStep.new("filesystem_changed", "FileSystemDock"),
 		]

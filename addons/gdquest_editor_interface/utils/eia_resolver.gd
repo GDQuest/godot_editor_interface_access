@@ -7,6 +7,12 @@
 const Enums := preload("./eia_enums.gd")
 const Types := preload("./eia_resolver_types.gd")
 
+# NOTE: Sometimes during testing the editor failed to properly load some scripts,
+# including only some library files. Unclear what the issue might be, but at least
+# for the library we can fall back onto using a hardcoded "include" file with
+# every library file listed. Not doing that for now, as the issue might as well
+# be with the testing environment on my end.
+
 const LIBRARY_ROOT := "../library"
 
 static var _library_cache: Array[GDScript] = [] # Keeps scripts' reference count up.
@@ -18,47 +24,125 @@ static func _static_init() -> void:
 	_reload_node_point_definitions()
 
 
-static func resolve(node_point: Enums.NodePoint, skip_cache: bool = false) -> Node:
+static func resolve_node(node_point: Enums.NodePoint, skip_cache: bool = false) -> Node:
 	if _node_cache.has(node_point):
 		return _node_cache[node_point]
 
 	var node_point_name := Enums.get_node_point_name(node_point)
 	if node_point_name.is_empty():
-		printerr("EIA: Unknown node point value (%d)." % [ node_point ])
+		push_error("[EIA] Unknown node point value (%d)." % [ node_point ])
 		return null
 
 	var definition := _get_node_point_definition(node_point_name)
 	if not definition:
-		printerr("EIA: Unknown node point definition (%s)." % [ node_point_name ])
+		push_error("[EIA] Unknown node point definition (%s)." % [ node_point_name ])
 		return null
 
 	if definition.resolver_steps.is_empty():
-		printerr("EIA: Node point definition (%s) has no resolver steps." % [ node_point_name ])
+		push_error("[EIA] Node point definition (%s) has no resolver steps." % [ node_point_name ])
 		return null
 
+	if definition is Types.MultiDefinition:
+		return _resolve_multi_node(definition, node_point, skip_cache)
+	else:
+		return _resolve_single_node(definition, node_point, skip_cache)
+
+	return null
+
+
+static func _resolve_single_node(definition: Types.Definition, node_point: Enums.NodePoint, skip_cache: bool) -> Node:
 	var current_node: Node = null
 	if definition.base_reference != -1:
-		current_node = resolve(definition.base_reference, skip_cache)
+		current_node = resolve_node(definition.base_reference, skip_cache)
 
+	# Resolve the node.
 	for i in definition.resolver_steps.size():
 		var step := definition.resolver_steps[i]
 		current_node = step.resolve(current_node, i)
 
-	if current_node:
-		var current_node_type := current_node.get_class()
-		var expected_node_type := definition.node_type
+	# Validate the result.
 
-		if not ClassDB.is_parent_class(current_node_type, expected_node_type):
-			printerr("EIA: Resolved node (%s) doesn't match or inherit expected type (%s)." % [ current_node_type, expected_node_type ])
-			return null
+	if not current_node:
+		var node_point_name := Enums.get_node_point_name(node_point)
+		push_error("[EIA] Failed to resolve node point value (%d) via definition (%s)." % [ node_point, node_point_name ])
+		return null
 
-	if not skip_cache && current_node:
+	var current_node_type := current_node.get_class()
+	var expected_node_type := definition.node_type
+	if not ClassDB.is_parent_class(current_node_type, expected_node_type):
+		push_error("[EIA] Resolved node (%s) doesn't match or inherit expected type (%s)." % [ current_node_type, expected_node_type ])
+		return null
+
+	# Cache the result, if necessary.
+	if not skip_cache:
 		_node_cache[node_point] = current_node
 
 	return current_node
 
 
+static func _resolve_multi_node(definition: Types.MultiDefinition, node_point: Enums.NodePoint, skip_cache: bool) -> Node:
+	if definition.node_type_map.is_empty() || node_point not in definition.node_type_map:
+		var node_point_name := Enums.get_node_point_name(node_point)
+		push_error("[EIA] Expected node point value (%d) is missing from multi-node definition (%s)." % [ node_point, node_point_name ])
+		return null
+
+	# Resolve nodes together.
+	var current_nodes: Array[Node] = []
+	if definition.base_reference != -1:
+		var base_resolved := resolve_node(definition.base_reference, skip_cache)
+		current_nodes.push_back(base_resolved)
+
+	# Validate results.
+
+	for i in definition.resolver_steps.size():
+		var step := definition.resolver_steps[i]
+		current_nodes = step.resolve_multi(current_nodes, i)
+
+	if current_nodes.size() != definition.node_type_map.size():
+		push_error("[EIA] Number of resolved nodes (%d) doesn't match expected number (%d)." % [ current_nodes.size(), definition.node_type_map.size() ])
+		return null
+
+	# Validate each resulting node.
+
+	var result_index := 0
+	var target_node: Node = null
+
+	for expected_node_point in definition.node_type_map:
+		var current_node := current_nodes[result_index]
+		result_index += 1
+
+		# Track the one node we want directly.
+		if expected_node_point == node_point:
+			target_node = current_node
+
+		if not current_node:
+			var node_point_name := Enums.get_node_point_name(expected_node_point)
+			push_error("[EIA] Failed to resolve node point value (%d) via definition (%s)." % [ expected_node_point, node_point_name ])
+			continue
+
+		var current_node_type := current_node.get_class()
+		var expected_node_type := definition.node_type_map[expected_node_point]
+		if not ClassDB.is_parent_class(current_node_type, expected_node_type):
+			push_error("[EIA] Resolved node (%s) doesn't match or inherit expected type (%s)." % [ current_node_type, expected_node_type ])
+			continue
+
+		# Cache the result, if necessary.
+		if not skip_cache:
+			_node_cache[expected_node_point] = current_node
+
+	return target_node
+
+
 # Helpers.
+
+static func _get_library_root() -> String:
+	## HACK: A simple hack to get current path from a static context.
+	var library_root := (Types as Script).resource_path
+	library_root = library_root.get_base_dir()
+	library_root = library_root.path_join(LIBRARY_ROOT)
+
+	return library_root.simplify_path()
+
 
 static func _reload_node_point_definitions() -> void:
 	_library_cache.clear()
@@ -68,12 +152,12 @@ static func _reload_node_point_definitions() -> void:
 	var fs := DirAccess.open(library_root)
 	var error := DirAccess.get_open_error()
 	if error != OK:
-		printerr("EIA: Failed to open library root for reading (code %d)." % [ error ])
+		push_error("[EIA] Failed to open library root for reading (code %d)." % [ error ])
 		return
 
 	error = fs.list_dir_begin()
 	if error != OK:
-		printerr("EIA: Failed to start library root listing (code %d)." % [ error ])
+		push_error("[EIA] Failed to start library root listing (code %d)." % [ error ])
 		return
 
 	# Automatically load every GDScript file from the library folder.
@@ -86,7 +170,7 @@ static func _reload_node_point_definitions() -> void:
 		var script_path := library_root.path_join(file_name)
 		var script: GDScript = load(script_path)
 		if not script:
-			printerr("EIA: Failed to load library file at '%s'." % [ script_path ])
+			push_error("[EIA] Failed to load library file at '%s'." % [ script_path ])
 			file_name = fs.get_next()
 			continue
 
@@ -95,7 +179,9 @@ static func _reload_node_point_definitions() -> void:
 
 		# Get all inner classes via the constant map.
 		for name: String in script.get_script_constant_map():
-			if script[name].get_base_script() != Types.Definition:
+			if script[name] is not Script:
+				continue
+			if not _is_node_point_definition(script[name]):
 				continue
 
 			# Classes have a suffix to avoid naming collisions, but enums do not
@@ -113,10 +199,17 @@ static func _get_node_point_definition(name: String) -> Types.Definition:
 	return _library_definition_map[name].new()
 
 
-static func _get_library_root() -> String:
-	## HACK: A simple hack to get current path from a static context.
-	var library_root := (Types as Script).resource_path
-	library_root = library_root.get_base_dir()
-	library_root = library_root.path_join(LIBRARY_ROOT)
+static func _is_node_point_definition(script: Script) -> bool:
+	if not script:
+		return false
+	if script == Types.Definition:
+		return true # Weird, but true.
 
-	return library_root.simplify_path()
+	var base_script := script.get_base_script()
+	while base_script:
+		if base_script == Types.Definition:
+			return true
+
+		base_script = base_script.get_base_script()
+
+	return false

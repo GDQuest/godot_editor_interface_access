@@ -14,13 +14,13 @@ const Resolver := preload("./utils/eia_resolver.gd")
 ## given enum value. Returns null if node cannot be resolved.
 ## Resolved node is cached for future calls.
 static func get_node_static(node_point: Enums.NodePoint) -> Node:
-	return Resolver.resolve(node_point)
+	return Resolver.resolve_node(node_point)
 
 
 ## Analogous to get_node_static(), but does not write resolved nodes
 ## to the node cache. Existing cache records are respected.
 static func get_node_dynamic(node_point: Enums.NodePoint) -> Node:
-	return Resolver.resolve(node_point, true)
+	return Resolver.resolve_node(node_point, true)
 
 
 # Testing.
@@ -37,7 +37,7 @@ static func test_resolve() -> void:
 		print("\t%s:" % [ key ])
 
 		var node_point: int = Enums.NodePoint[key]
-		var node := Resolver.resolve(node_point, true)
+		var node := Resolver.resolve_node(node_point, true)
 		if node:
 			valid_count += 1
 			print("\t\tOK")

@@ -10,5 +10,5 @@ class HistoryDockDef extends Types.Definition:
 		base_reference = Enums.NodePoint.EDITOR_NODE
 
 		resolver_steps = [
-			Types.GetSignalCallableStep.new("scene_changed", "HistoryDock"),
+			Types.GetSignalTypeStep.new("scene_changed", "HistoryDock"),
 		]
