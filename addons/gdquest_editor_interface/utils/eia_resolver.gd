@@ -42,6 +42,17 @@ static func resolve_node(node_point: Enums.NodePoint, skip_cache: bool = false) 
 		push_error("[EIA] Node point definition (%s) has no resolver steps." % [ node_point_name ])
 		return null
 
+	if skip_cache && not definition.prefetch_references.is_empty():
+		push_error("[EIA] Node point definition (%s) has pre-fetch references, which requires caching." % [ node_point_name ])
+		return null
+
+	for prefetch_point in definition.prefetch_references:
+		# Caching is forced here because that's the only way pre-fetching makes sense.
+		var prefetch_node := resolve_node(prefetch_point, false)
+		if not prefetch_node:
+			push_error("[EIA] Node point definition (%s) couldn't satisfy its prerequisites." % [ node_point_name ])
+			return null
+
 	if definition is Types.MultiDefinition:
 		return _resolve_multi_node(definition, node_point, skip_cache)
 	else:
@@ -131,6 +142,13 @@ static func _resolve_multi_node(definition: Types.MultiDefinition, node_point: E
 			_node_cache[expected_node_point] = current_node
 
 	return target_node
+
+
+static func get_node_cached(node_point: Enums.NodePoint) -> Node:
+	if _node_cache.has(node_point):
+		return _node_cache[node_point]
+
+	return null
 
 
 # Helpers.

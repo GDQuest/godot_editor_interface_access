@@ -21,6 +21,10 @@ class Definition:
 	## -1 if no base reference is needed (then the first step must be a
 	## custom one).
 	var base_reference: int = -1
+	## Node points which must be resolved before resolver can attempt to
+	## go after the target node. Unlike the base reference, these are not
+	## passed to the steps.
+	var prefetch_references: Array[Enums.NodePoint] = []
 	## Steps for the resolver to transform the base reference into the
 	## target node or nodes.
 	var resolver_steps: Array[Step] = []

@@ -1,6 +1,9 @@
 ## Utility functions for the node point resolver utility and point definitions.
 @tool
 
+const Enums := preload("./eia_enums.gd")
+const Resolver := preload("./eia_resolver.gd")
+
 static var _editor_icon_list: PackedStringArray = []
 
 
@@ -116,3 +119,49 @@ static func node_has_editor_icon(base_node: Node, icon_name: String, strict: boo
 		return false
 
 	return true
+
+
+# Dock utilities.
+
+static func dock_get_locations() -> Array[Node]:
+	var dock_locations: Array[Node] = []
+
+	# First, collect static containers with docks.
+
+	var static_points: Array[Enums.NodePoint] = [
+		Enums.NodePoint.LAYOUT_DOCK_LEFT_LEFT_TOP,
+		Enums.NodePoint.LAYOUT_DOCK_LEFT_LEFT_BOTTOM,
+		Enums.NodePoint.LAYOUT_DOCK_LEFT_RIGHT_TOP,
+		Enums.NodePoint.LAYOUT_DOCK_LEFT_RIGHT_BOTTOM,
+		Enums.NodePoint.LAYOUT_DOCK_RIGHT_LEFT_TOP,
+		Enums.NodePoint.LAYOUT_DOCK_RIGHT_LEFT_BOTTOM,
+		Enums.NodePoint.LAYOUT_DOCK_RIGHT_RIGHT_TOP,
+		Enums.NodePoint.LAYOUT_DOCK_RIGHT_RIGHT_BOTTOM,
+		Enums.NodePoint.LAYOUT_DOCK_MIDDLE_BOTTOM,
+		Enums.NodePoint.LAYOUT_DOCK_HIDDEN_CONTAINER,
+	]
+	for node_point in static_points:
+		var resolved_node := Resolver.get_node_cached(node_point)
+		if resolved_node:
+			dock_locations.push_back(resolved_node)
+
+	# Then, check dynamic ones. Dynamic places are windows when
+	# the dock is made floating. These exist in WindowWrapper nodes
+	# at the root of layout base. They always have a margin container
+	# (after mandatory nodes), and within is the dock.
+
+	var layout_base := Resolver.get_node_cached(Enums.NodePoint.LAYOUT_ROOT)
+	if layout_base:
+		var wrappers := layout_base.find_children("", "WindowWrapper", false, false)
+		for wrapper: Control in wrappers:
+			var window := wrapper.get_child(0)
+			if window.get_child_count() != 3:
+				continue # Must be exactly 3 children (2 built-in, 1 target).
+
+			var floating_container := window.get_child(2)
+			if floating_container is not MarginContainer:
+				continue
+
+			dock_locations.push_back(floating_container)
+
+	return dock_locations
