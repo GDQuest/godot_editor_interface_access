@@ -226,6 +226,42 @@ class GetSignalTypeStep extends Step:
 		return null
 
 
+## Finds a node inside of a WindowWrapper container, checking all
+## potential locations and matching with the given type.
+class GetWindowWrappedTypeStep extends Step:
+	var object_type_name: String = ""
+
+	func _init(type: String) -> void:
+		object_type_name = type
+
+	func resolve(base_node: Node, step_index: int = 0) -> Node:
+		if not base_node:
+			return null
+
+		if not ClassDB.is_parent_class(base_node.get_class(), "WindowWrapper"):
+			push_error("[EIA] Step %d: Expected a WindowWrapper node.")
+			return null
+
+		var unwrapped_nodes := base_node.find_children("", object_type_name, false, false)
+		if not unwrapped_nodes.is_empty():
+			return unwrapped_nodes[0]
+
+		var window := base_node.get_child(0)
+		var windowed_nodes := window.find_children("", object_type_name, false, false)
+		if not windowed_nodes.is_empty():
+			return windowed_nodes[0]
+
+		if window.get_child_count() == 3:
+			var margin_container := window.get_child(2)
+			if margin_container is MarginContainer:
+				var wrapped_nodes := margin_container.find_children("", object_type_name, false, false)
+				if not wrapped_nodes.is_empty():
+					return wrapped_nodes[0]
+
+		push_error("[EIA] Step %d: Expected '%s' node inside WindowWrapper container." % [ step_index, object_type_name ])
+		return null
+
+
 # Validating steps operate on the same node reference and return
 # null if it doesn't satisfy the condition.
 

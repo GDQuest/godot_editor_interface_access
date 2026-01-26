@@ -121,7 +121,7 @@ static func node_has_editor_icon(base_node: Node, icon_name: String, strict: boo
 	return true
 
 
-# Dock utilities.
+# Multi-window utilities.
 
 static func dock_get_locations() -> Array[Node]:
 	var dock_locations: Array[Node] = []
@@ -156,7 +156,7 @@ static func dock_get_locations() -> Array[Node]:
 		for wrapper: Control in wrappers:
 			var window := wrapper.get_child(0)
 			if window.get_child_count() != 3:
-				continue # Must be exactly 3 children (2 built-in, 1 target).
+				continue # Must be exactly 3 children (2 mandatory + 1 for margin)
 
 			var floating_container := window.get_child(2)
 			if floating_container is not MarginContainer:
