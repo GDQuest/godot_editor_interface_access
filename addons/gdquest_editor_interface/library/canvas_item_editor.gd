@@ -41,6 +41,7 @@ class CanvasItemEditorMainToolbarButtonsDef extends Types.MultiDefinition:
 			Enums.NodePoint.CANVAS_ITEM_EDITOR_MAIN_TOOLBAR_PIVOT_BUTTON:              "Button",
 			Enums.NodePoint.CANVAS_ITEM_EDITOR_MAIN_TOOLBAR_PAN_BUTTON:                "Button",
 			Enums.NodePoint.CANVAS_ITEM_EDITOR_MAIN_TOOLBAR_RULER_BUTTON:              "Button",
+			Enums.NodePoint.CANVAS_ITEM_EDITOR_MAIN_TOOLBAR_LOCAL_SPACE_BUTTON:        "Button",
 			Enums.NodePoint.CANVAS_ITEM_EDITOR_MAIN_TOOLBAR_SMART_SNAP_BUTTON:         "Button",
 			Enums.NodePoint.CANVAS_ITEM_EDITOR_MAIN_TOOLBAR_GRID_BUTTON:               "Button",
 			Enums.NodePoint.CANVAS_ITEM_EDITOR_MAIN_TOOLBAR_SNAP_OPTIONS_BUTTON:       "MenuButton",
@@ -63,23 +64,46 @@ class CanvasItemEditorMainToolbarButtonsDef extends Types.MultiDefinition:
 
 			var toolbar := base_nodes[0]
 			var toolbar_buttons := toolbar.find_children("", "Button", false, false)
-			results[0]  = toolbar_buttons[0]  if Utils.node_has_editor_icon(toolbar_buttons[0],  "ToolSelect", true)    else null
-			results[1]  = toolbar_buttons[1]  if Utils.node_has_editor_icon(toolbar_buttons[1],  "ToolMove", true)      else null
-			results[2]  = toolbar_buttons[2]  if Utils.node_has_editor_icon(toolbar_buttons[2],  "ToolRotate", true)    else null
-			results[3]  = toolbar_buttons[3]  if Utils.node_has_editor_icon(toolbar_buttons[3],  "ToolScale", true)     else null
-			results[4]  = toolbar_buttons[4]  if Utils.node_has_editor_icon(toolbar_buttons[4],  "ListSelect", true)    else null
-			results[5]  = toolbar_buttons[5]  if Utils.node_has_editor_icon(toolbar_buttons[5],  "EditPivot", true)     else null
-			results[6]  = toolbar_buttons[6]  if Utils.node_has_editor_icon(toolbar_buttons[6],  "ToolPan", true)       else null
-			results[7]  = toolbar_buttons[7]  if Utils.node_has_editor_icon(toolbar_buttons[7],  "Ruler", true)         else null
-			results[8]  = toolbar_buttons[8]  if Utils.node_has_editor_icon(toolbar_buttons[8],  "Snap", true)          else null
-			results[9]  = toolbar_buttons[9]  if Utils.node_has_editor_icon(toolbar_buttons[9],  "SnapGrid", true)      else null
-			results[10] = toolbar_buttons[10] if Utils.node_has_editor_icon(toolbar_buttons[10], "GuiTabMenuHl", true)  else null
-			results[11] = toolbar_buttons[11] if Utils.node_has_editor_icon(toolbar_buttons[11], "Lock", true)          else null
-			results[12] = toolbar_buttons[12] if Utils.node_has_editor_icon(toolbar_buttons[12], "Unlock", true)        else null
-			results[13] = toolbar_buttons[13] if Utils.node_has_editor_icon(toolbar_buttons[13], "Group", true)         else null
-			results[14] = toolbar_buttons[14] if Utils.node_has_editor_icon(toolbar_buttons[14], "Ungroup", true)       else null
-			results[15] = toolbar_buttons[15] if Utils.node_has_editor_icon(toolbar_buttons[15], "Bone", true)          else null
-			results[16] = toolbar_buttons[16]
+			var toolbar_buttons_map: Dictionary[String, Button] = {}
+
+			for button: Button in toolbar_buttons:
+				var button_key := ""
+
+				# First, try to identify using the icon.
+				if button.icon:
+					button_key = Utils.node_get_editor_icon(button)
+
+				# Then, handle special cases.
+				if button_key.is_empty():
+					if button is MenuButton:
+						var popup_menu := (button as MenuButton).get_popup()
+						if Utils.node_has_signal_callable(popup_menu, "about_to_popup", "CanvasItemEditor::_prepare_view_menu"):
+							button_key = "ViewMenu"
+
+				# Couldn't identify, skipping.
+				if button_key.is_empty():
+					continue
+
+				toolbar_buttons_map[button_key] = button
+
+			results[0]  = toolbar_buttons_map["ToolSelect"]     if "ToolSelect"     in toolbar_buttons_map else null
+			results[1]  = toolbar_buttons_map["ToolMove"]       if "ToolMove"       in toolbar_buttons_map else null
+			results[2]  = toolbar_buttons_map["ToolRotate"]     if "ToolRotate"     in toolbar_buttons_map else null
+			results[3]  = toolbar_buttons_map["ToolScale"]      if "ToolScale"      in toolbar_buttons_map else null
+			results[4]  = toolbar_buttons_map["ListSelect"]     if "ListSelect"     in toolbar_buttons_map else null
+			results[5]  = toolbar_buttons_map["EditPivot"]      if "EditPivot"      in toolbar_buttons_map else null
+			results[6]  = toolbar_buttons_map["ToolPan"]        if "ToolPan"        in toolbar_buttons_map else null
+			results[7]  = toolbar_buttons_map["Ruler"]          if "Ruler"          in toolbar_buttons_map else null
+			results[8]  = toolbar_buttons_map["Object"]         if "Object"         in toolbar_buttons_map else null
+			results[9]  = toolbar_buttons_map["Snap"]           if "Snap"           in toolbar_buttons_map else null
+			results[10] = toolbar_buttons_map["SnapGrid"]       if "SnapGrid"       in toolbar_buttons_map else null
+			results[11] = toolbar_buttons_map["GuiTabMenuHl"]   if "GuiTabMenuHl"   in toolbar_buttons_map else null
+			results[12] = toolbar_buttons_map["Lock"]           if "Lock"           in toolbar_buttons_map else null
+			results[13] = toolbar_buttons_map["Unlock"]         if "Unlock"         in toolbar_buttons_map else null
+			results[14] = toolbar_buttons_map["Group"]          if "Group"          in toolbar_buttons_map else null
+			results[15] = toolbar_buttons_map["Ungroup"]        if "Ungroup"        in toolbar_buttons_map else null
+			results[16] = toolbar_buttons_map["Bone"]           if "Bone"           in toolbar_buttons_map else null
+			results[17] = toolbar_buttons_map["ViewMenu"]       if "ViewMenu"       in toolbar_buttons_map else null
 
 			return results
 
@@ -95,6 +119,7 @@ class CanvasItemEditorMainToolbarSelectableButtonDef        extends CanvasItemEd
 class CanvasItemEditorMainToolbarPivotButtonDef             extends CanvasItemEditorMainToolbarButtonsDef: pass
 class CanvasItemEditorMainToolbarPanButtonDef               extends CanvasItemEditorMainToolbarButtonsDef: pass
 class CanvasItemEditorMainToolbarRulerButtonDef             extends CanvasItemEditorMainToolbarButtonsDef: pass
+class CanvasItemEditorMainToolbarLocalSpaceButtonDef        extends CanvasItemEditorMainToolbarButtonsDef: pass
 class CanvasItemEditorMainToolbarSmartSnapButtonDef         extends CanvasItemEditorMainToolbarButtonsDef: pass
 class CanvasItemEditorMainToolbarGridButtonDef              extends CanvasItemEditorMainToolbarButtonsDef: pass
 class CanvasItemEditorMainToolbarSnapOptionsButtonDef       extends CanvasItemEditorMainToolbarButtonsDef: pass

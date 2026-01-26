@@ -4,6 +4,9 @@ const Enums := preload("../utils/eia_enums.gd")
 const Types := preload("../utils/eia_resolver_types.gd")
 
 
+# TODO: To be split up into individual dialogs_XYZ.gd files when their node points are populated.
+
+
 class EditorSettingsDialogDef extends Types.Definition:
 	func _init() -> void:
 		node_type = "EditorSettingsDialog"
@@ -84,16 +87,6 @@ class OrphanResourcesDialogDef extends Types.Definition:
 		]
 
 
-class DependencyEditorDialogDef extends Types.Definition:
-	func _init() -> void:
-		node_type = "DependencyEditor"
-		base_reference = Enums.NodePoint.LAYOUT_ROOT
-
-		resolver_steps = [
-			Types.GetChildTypeStep.new("DependencyEditor")
-		]
-
-
 class DependencyErrorDialogDef extends Types.Definition:
 	func _init() -> void:
 		node_type = "DependencyErrorDialog"
@@ -101,6 +94,17 @@ class DependencyErrorDialogDef extends Types.Definition:
 
 		resolver_steps = [
 			Types.GetChildTypeStep.new("DependencyErrorDialog")
+		]
+
+
+## NOTE: Not available in Android and Web builds.
+class FbxImporterManagerDef extends Types.Definition:
+	func _init() -> void:
+		node_type = "FBXImporterManager"
+		base_reference = Enums.NodePoint.LAYOUT_ROOT
+
+		resolver_steps = [
+			Types.GetChildTypeStep.new("FBXImporterManager")
 		]
 
 
@@ -131,15 +135,4 @@ class ImportDynamicFontSettingsDialogDef extends Types.Definition:
 
 		resolver_steps = [
 			Types.GetChildTypeStep.new("DynamicFontImportSettingsDialog")
-		]
-
-
-## NOTE: Not available in Android and Web builds.
-class FbxImporterManagerDef extends Types.Definition:
-	func _init() -> void:
-		node_type = "FBXImporterManager"
-		base_reference = Enums.NodePoint.LAYOUT_ROOT
-
-		resolver_steps = [
-			Types.GetChildTypeStep.new("FBXImporterManager")
 		]

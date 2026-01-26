@@ -7,8 +7,10 @@ const Types := preload("../utils/eia_resolver_types.gd")
 class FileSystemDockDef extends Types.Definition:
 	func _init() -> void:
 		node_type = "FileSystemDock"
-		base_reference = Enums.NodePoint.EDITOR_FILE_SYSTEM
+
+		var custom_script := func(base_node: Node) -> Node:
+			return EditorInterface.get_file_system_dock()
 
 		resolver_steps = [
-			Types.GetSignalTypeStep.new("filesystem_changed", "FileSystemDock"),
+			Types.DoCustomStep.new(custom_script),
 		]
