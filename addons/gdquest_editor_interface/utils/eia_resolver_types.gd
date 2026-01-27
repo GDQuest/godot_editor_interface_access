@@ -12,19 +12,27 @@ const Enums := preload("./eia_enums.gd")
 class Definition:
 	# NOTE: Built-in types can be stored directly (as a GDScriptNativeClass
 	# object), but that doesn't work for some valid types which are not exposed
-	# to scripting, like CanvasItemEditor.
+	# to scripting, like CanvasItemEditor. So we use strings instead, which,
+	# ironically, gives us better type safety in the end.
 
 	## Expected node type of the last resolved node. Can be any valid ClassDB
 	## type.
 	var node_type: String = "Node"
-	## Base node point value from which the resolver should start. Can be
-	## -1 if no base reference is needed (then the first step must be a
-	## custom one).
-	var base_reference: int = -1
 	## Node points which must be resolved before resolver can attempt to
 	## go after the target node. Unlike the base reference, these are not
 	## passed to the steps.
 	var prefetch_references: Array[Enums.NodePoint] = []
+
+	## Base node point value from which the resolver should start. This
+	## value is passed to the first step as input. Can be -1 if no base
+	## reference is needed (then the first step must be a custom one).
+	var base_reference: int = -1
+	## If not empty, base reference above is ignored and the definition
+	## expects a base node to be provided explicitly using EIA.get_node_relative().
+	## The type of the provided node is validated against this value, and
+	## the node is passed to the first step as input.
+	var relative_node_type: String = ""
+
 	## Steps for the resolver to transform the base reference into the
 	## target node or nodes.
 	var resolver_steps: Array[Step] = []

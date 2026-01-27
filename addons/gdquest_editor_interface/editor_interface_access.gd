@@ -11,16 +11,21 @@ const Resolver := preload("./utils/eia_resolver.gd")
 
 
 ## Resolves and returns a node in the editor tree associated with the
-## given enum value. Returns null if node cannot be resolved.
-## Resolved node is cached for future calls.
-static func get_node_static(node_point: Enums.NodePoint) -> Node:
-	return Resolver.resolve_node(node_point)
+## given node point value. Returns null if the node, or one of its
+## pre-requisites, cannot be resolved.
+## Resolved node is cached for future calls, unless the skip_cache
+## flag is set.
+static func get_node(node_point: Enums.NodePoint, skip_cache: bool = false) -> Node:
+	return Resolver.resolve_node(node_point, null, skip_cache)
 
 
-## Analogous to get_node_static(), but does not write resolved nodes
-## to the node cache. Existing cache records are respected.
-static func get_node_dynamic(node_point: Enums.NodePoint) -> Node:
-	return Resolver.resolve_node(node_point, true)
+## Resolves and returns a node in the editor tree associated with the
+## given node point value, relative to the given base node. If the
+## definition for this node point has a base reference, it will be ignored.
+## Returns null if the node, or one of its pre-requisites, cannot be resolved.
+## Resolved nodes are never cached.
+static func get_node_relative(base_node: Node, node_point: Enums.NodePoint) -> Node:
+	return Resolver.resolve_node(node_point, base_node, true)
 
 
 # Testing.
@@ -32,15 +37,22 @@ static func test_resolve(skip_cache: bool = false) -> void:
 
 	var total_count := Enums.NodePoint.size()
 	var valid_count := 0
+	var skipped_count := 0
 
 	for key: String in Enums.NodePoint:
 		print("\t%s:" % [ key ])
-
 		var node_point: int = Enums.NodePoint[key]
-		var node := Resolver.resolve_node(node_point, skip_cache)
+
+		if node_point >= 100_000_000: # Reusable nodes cannot be tested without context.
+			skipped_count += 1
+			print_rich("\t\t[i]SKIPPED[/i] (reusable)")
+			continue
+
+		var node := Resolver.resolve_node(node_point, null, skip_cache)
 		if node:
 			valid_count += 1
-			print("\t\tOK")
+			print_rich("\t\t[b]OK[/b]")
 
 	print("----------------------------")
-	print("[EIA] Resolved nodes: %d / %d" % [ valid_count, total_count ])
+	print_rich("[EIA] Resolved successfully: [b]%d / %d[/b]" % [ valid_count, total_count - skipped_count ])
+	print_rich("              excl. skipped: [b]%d[/b]" % [ skipped_count ])

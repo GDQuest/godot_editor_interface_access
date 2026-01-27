@@ -137,3 +137,40 @@ class ScriptEditorContainerFindReplaceBarDef extends Types.Definition:
 		resolver_steps = [
 			Types.GetChildTypeStep.new("FindReplaceBar"),
 		]
+
+
+# Reusable components.
+
+class ScriptTextEditorCodeEditorDef extends Types.Definition:
+	func _init() -> void:
+		node_type = "CodeTextEditor"
+		relative_node_type = "ScriptTextEditor"
+
+		resolver_steps = [
+			Types.GetChildTypeStep.new("VSplitContainer", 0),
+			Types.GetChildTypeStep.new("CodeTextEditor"),
+		]
+
+
+class ScriptTextEditorCodeEditorCodeEditDef extends Types.Definition:
+	func _init() -> void:
+		node_type = "CodeEdit"
+		relative_node_type = "ScriptTextEditor"
+
+		resolver_steps = [
+			Types.GetChildTypeStep.new("VSplitContainer", 0),
+			Types.GetChildTypeStep.new("CodeTextEditor"),
+			Types.GetChildTypeStep.new("CodeEdit"),
+		]
+
+
+class ScriptTextEditorCodeEditorFooterBarDef extends Types.Definition:
+	func _init() -> void:
+		node_type = "HBoxContainer"
+		relative_node_type = "ScriptTextEditor"
+
+		resolver_steps = [
+			Types.GetChildTypeStep.new("VSplitContainer", 0),
+			Types.GetChildTypeStep.new("CodeTextEditor"),
+			Types.GetChildTypeStep.new("HBoxContainer", 0),
+		]

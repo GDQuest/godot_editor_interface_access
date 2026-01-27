@@ -189,6 +189,28 @@ enum NodePoint {
 
 
 	# 5_000_000 - Asset library.
+
+
+	# 100_000_000 - Reusable components.
+
+	# These nodes are reused multiple times throughout the editor UI,
+	# e.g. one ScriptTextEditor per open script, or various inspector
+	# panels. In some cases they cannot be fetched via static node points
+	# at all, like in the case of script editors, though some may be
+	# accessible via points defined above.
+	#
+	# The definitions below exist for fetching children/descendants of
+	# these nodes and expect a known base reference. See EIA.get_node_relative().
+
+	#SCRIPT_TEXT_EDITOR = 100_001_000,
+	SCRIPT_TEXT_EDITOR_CODE_EDITOR = 100_001_001,
+	SCRIPT_TEXT_EDITOR_CODE_EDITOR_CODE_EDIT,
+	SCRIPT_TEXT_EDITOR_CODE_EDITOR_FOOTER_BAR,
+
+	#EDITOR_HELP = 100_002_000,
+	EDITOR_HELP_RICH_TEXT = 100_002_001,
+	EDITOR_HELP_FIND_BAR,
+	EDITOR_HELP_FOOTER_BAR,
 }
 
 
