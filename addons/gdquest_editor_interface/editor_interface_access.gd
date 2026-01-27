@@ -10,6 +10,8 @@ const Enums := preload("./utils/eia_enums.gd")
 const Resolver := preload("./utils/eia_resolver.gd")
 
 
+# Node access.
+
 ## Resolves and returns a node in the editor tree associated with the
 ## given node point value. Returns null if the node, or one of its
 ## pre-requisites, cannot be resolved.
@@ -26,6 +28,27 @@ static func get_node(node_point: Enums.NodePoint, skip_cache: bool = false) -> N
 ## Resolved nodes are never cached.
 static func get_node_relative(base_node: Node, node_point: Enums.NodePoint) -> Node:
 	return Resolver.resolve_node(node_point, base_node, true)
+
+
+# Helpers.
+
+static func is_script_editor_active() -> bool:
+	var script_editor := get_node(Enums.NodePoint.SCRIPT_EDITOR)
+	if not script_editor:
+		return false # Should never happen.
+
+	var script_window := script_editor.get_window()
+
+	# The editor is embedded in the main window, just check if the script
+	# editor is visible.
+	if script_window == script_editor.get_tree().root:
+		return script_editor.is_visible_in_tree()
+
+	# The editor is floating, has its own window. Check if it's focused.
+	if script_window == Window.get_focused_window():
+		return true
+
+	return false
 
 
 # Testing.
