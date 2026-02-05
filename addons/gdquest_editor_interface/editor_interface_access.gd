@@ -2,7 +2,7 @@
 ## editor GUI elements with persistent identifiers.
 ## Example usage:
 ##   var EIA := load("res://addons/gdquest_editor_interface/editor_interface_access.gd")
-##   var button: Button = EIA.get_node_dynamic(EIA.Enums.NodePoint.CANVAS_ITEM_EDITOR_TOOLBAR_SELECTABLE_BUTTON)
+##   var button: Button = EIA.get_node_dynamic(EIA.Enums.NodePoint.CANVAS_ITEM_EDITOR_MAIN_TOOLBAR_SELECTABLE_BUTTON)
 ##   prints("Result:", button, button.tooltip_text)
 @tool
 
@@ -56,26 +56,50 @@ static func is_script_editor_active() -> bool:
 ## Runs resolve (without cache) for every defined node point.
 static func test_resolve(skip_cache: bool = false) -> void:
 	print("[EIA] Running resolve test...")
-	print("----------------------------")
+	print("========================================")
 
 	var total_count := Enums.NodePoint.size()
 	var valid_count := 0
 	var skipped_count := 0
 
+	var last_node_point := -1
+	var last_total_count := 0
+	var last_valid_count := 0
+	var last_skipped_count := 0
+
 	for key: String in Enums.NodePoint:
-		print("\t%s:" % [ key ])
 		var node_point: int = Enums.NodePoint[key]
+		if last_node_point != -1 && (last_node_point + 1) != node_point:
+			print("")
+			print_rich("\tin section resolved successfully: [b]%d / %d[/b]" % [ last_valid_count, last_total_count - last_skipped_count ])
+			print_rich("\t                   excl. skipped: [b]%d[/b]" % [ last_skipped_count ])
+			print("----------------------------------------")
+
+			last_total_count = 0
+			last_valid_count = 0
+			last_skipped_count = 0
+
+		last_node_point = node_point
+		last_total_count += 1
+
+		print("\t%s:" % [ key ])
 
 		if node_point >= 100_000_000: # Reusable nodes cannot be tested without context.
 			skipped_count += 1
+			last_skipped_count += 1
 			print_rich("\t\t[i]SKIPPED[/i] (reusable)")
 			continue
 
 		var node := Resolver.resolve_node(node_point, null, skip_cache)
 		if node:
 			valid_count += 1
+			last_valid_count += 1
 			print_rich("\t\t[b]OK[/b]")
 
-	print("----------------------------")
+	print("")
+	print_rich("\tin section resolved successfully: [b]%d / %d[/b]" % [ last_valid_count, last_total_count - last_skipped_count ])
+	print_rich("\t                   excl. skipped: [b]%d[/b]" % [ last_skipped_count ])
+
+	print("========================================")
 	print_rich("[EIA] Resolved successfully: [b]%d / %d[/b]" % [ valid_count, total_count - skipped_count ])
 	print_rich("              excl. skipped: [b]%d[/b]" % [ skipped_count ])
