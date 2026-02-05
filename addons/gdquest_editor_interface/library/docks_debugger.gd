@@ -7,30 +7,9 @@ const Utils := preload("../utils/eia_resolver_utils.gd")
 
 class DebuggerDockDef extends Types.Definition:
 	func _init() -> void:
-		node_type = "EditorDock"
-		prefetch_references = [
-			Enums.NodePoint.LAYOUT_ROOT,
-			Enums.NodePoint.LAYOUT_DOCK_LEFT_LEFT_TOP,
-			Enums.NodePoint.LAYOUT_DOCK_LEFT_LEFT_BOTTOM,
-			Enums.NodePoint.LAYOUT_DOCK_LEFT_RIGHT_TOP,
-			Enums.NodePoint.LAYOUT_DOCK_LEFT_RIGHT_BOTTOM,
-			Enums.NodePoint.LAYOUT_DOCK_RIGHT_LEFT_TOP,
-			Enums.NodePoint.LAYOUT_DOCK_RIGHT_LEFT_BOTTOM,
-			Enums.NodePoint.LAYOUT_DOCK_RIGHT_RIGHT_TOP,
-			Enums.NodePoint.LAYOUT_DOCK_RIGHT_RIGHT_BOTTOM,
-			Enums.NodePoint.LAYOUT_DOCK_MIDDLE_BOTTOM,
-			Enums.NodePoint.LAYOUT_DOCK_HIDDEN_CONTAINER,
-		]
-
-		var custom_script := func(base_node: Node) -> Node:
-			var dock_locations := Utils.dock_get_locations()
-			for dock_container in dock_locations:
-				var dock := dock_container.find_child("Debugger", false, false)
-				if dock:
-					return dock
-
-			return null
+		node_type = "EditorDebuggerNode"
+		base_reference = Enums.NodePoint.SCENE_DOCK
 
 		resolver_steps = [
-			Types.DoCustomStep.new(custom_script),
+			Types.GetSignalTypeStep.new("remote_tree_selected", "EditorDebuggerNode"),
 		]
