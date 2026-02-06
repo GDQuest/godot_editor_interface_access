@@ -121,7 +121,7 @@ class GetChildTypeStep extends Step:
 				if counter == type_index:
 					return child_node
 
-		push_error("[EIA] Step %d: Expected at least %d '%s' child node(s), found %d." % [ step_index, (type_index + 1), type_name, counter ])
+		push_error("[EIA] Step %d: Expected at least %d '%s' child node(s), found %d." % [ step_index, (type_index + 1), type_name, (counter + 1) ])
 		return null
 
 

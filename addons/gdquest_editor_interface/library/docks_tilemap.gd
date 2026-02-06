@@ -5,6 +5,8 @@ const Types := preload("../utils/eia_resolver_types.gd")
 const Utils := preload("../utils/eia_resolver_utils.gd")
 
 
+## The dock is only visible after the user has selected a TileMapLayer
+## node.
 class TileMapDockDef extends Types.Definition:
 	func _init() -> void:
 		node_type = "TileMapLayerEditor"
@@ -18,7 +20,7 @@ class TileMapDockDef extends Types.Definition:
 		]
 
 
-class TileMapTabsDef extends Types.Definition:
+class TileMapDockTabsDef extends Types.Definition:
 	func _init() -> void:
 		node_type = "TabBar"
 		base_reference = Enums.NodePoint.TILE_MAP_DOCK
@@ -285,36 +287,6 @@ class TileMapTilesAtlasViewZoomWidgetDef extends Types.Definition:
 
 		resolver_steps = [
 			Types.GetChildTypeStep.new("EditorZoomWidget", 0),
-		]
-
-
-class TileMapTilesAtlasViewZoomOutButtonDef extends Types.Definition:
-	func _init() -> void:
-		node_type = "Button"
-		base_reference = Enums.NodePoint.TILE_MAP_TILES_ATLAS_VIEW_ZOOM_WIDGET
-
-		resolver_steps = [
-			Types.GetChildTypeStep.new("Button", 0),
-		]
-
-
-class TileMapTilesAtlasViewZoomResetButtonDef extends Types.Definition:
-	func _init() -> void:
-		node_type = "Button"
-		base_reference = Enums.NodePoint.TILE_MAP_TILES_ATLAS_VIEW_ZOOM_WIDGET
-
-		resolver_steps = [
-			Types.GetChildTypeStep.new("Button", 1),
-		]
-
-
-class TileMapTilesAtlasViewZoomInButtonDef extends Types.Definition:
-	func _init() -> void:
-		node_type = "Button"
-		base_reference = Enums.NodePoint.TILE_MAP_TILES_ATLAS_VIEW_ZOOM_WIDGET
-
-		resolver_steps = [
-			Types.GetChildTypeStep.new("Button", 2),
 		]
 
 
