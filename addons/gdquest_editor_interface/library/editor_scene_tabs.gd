@@ -32,4 +32,29 @@ class SceneTabsAddButtonDef extends Types.Definition:
 
 		resolver_steps = [
 			Types.GetChildTypeStep.new("Button"),
+			Types.HasEditorIconStep.new("Add"),
+		]
+
+
+class SceneTabsListButtonDef extends Types.Definition:
+	func _init() -> void:
+		node_type = "MenuButton"
+		base_reference = Enums.NodePoint.SCENE_TABS_TAB_BAR
+
+		resolver_steps = [
+			Types.GetParentCountStep.new(1),
+			Types.GetChildTypeStep.new("Button", 0),
+			Types.HasEditorIconStep.new("GuiTabMenuHl"),
+		]
+
+
+class LayoutDistractionFreeButtonDef extends Types.Definition:
+	func _init() -> void:
+		node_type = "Button"
+		base_reference = Enums.NodePoint.SCENE_TABS_TAB_BAR
+
+		resolver_steps = [
+			Types.GetParentCountStep.new(1),
+			Types.GetChildTypeStep.new("Button", 1),
+			Types.HasEditorIconStep.new("DistractionFree"),
 		]

@@ -80,3 +80,25 @@ class RunBarStopButtonDef          extends RunBarButtonsDef: pass
 class RunBarPlayCurrentButtonDef   extends RunBarButtonsDef: pass
 class RunBarPlayCustomButtonDef    extends RunBarButtonsDef: pass
 class RunBarMovieModeButtonDef     extends RunBarButtonsDef: pass
+
+
+class RenderingModeButtonDef extends Types.Definition:
+	func _init() -> void:
+		node_type = "OptionButton"
+		base_reference = Enums.NodePoint.LAYOUT_TITLE_BAR
+
+		resolver_steps = [
+			Types.GetChildTypeStep.new("HBoxContainer", -1),
+			Types.GetChildTypeStep.new("OptionButton", 0),
+		]
+
+
+class EditorUpdateSpinnerDef extends Types.Definition:
+	func _init() -> void:
+		node_type = "MenuButton"
+		base_reference = Enums.NodePoint.LAYOUT_TITLE_BAR
+
+		resolver_steps = [
+			Types.GetChildTypeStep.new("HBoxContainer", -1),
+			Types.GetChildTypeStep.new("MenuButton", 0),
+		]

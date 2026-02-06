@@ -102,6 +102,7 @@ class DoCustomMultiStep extends Step:
 
 ## Finds a child node of the specified type. Optionally, can find the
 ## N-th child for the given type (only counting successful matches).
+## If the given index is negative, searches from the end.
 class GetChildTypeStep extends Step:
 	var type_name: String = ""
 	var type_index: int = 0
@@ -115,17 +116,35 @@ class GetChildTypeStep extends Step:
 			return null
 
 		var counter := -1
-		for child_node in base_node.get_children():
-			if ClassDB.is_parent_class(child_node.get_class(), type_name):
-				counter += 1
-				if counter == type_index:
-					return child_node
 
-		push_error("[EIA] Step %d: Expected at least %d '%s' child node(s), found %d." % [ step_index, (type_index + 1), type_name, (counter + 1) ])
+		if type_index >= 0:
+			for child_node in base_node.get_children():
+				if ClassDB.is_parent_class(child_node.get_class(), type_name):
+					counter += 1
+					if counter == type_index:
+						return child_node
+
+			push_error("[EIA] Step %d: Expected at least %d '%s' child node(s), found %d." % [ step_index, (type_index + 1), type_name, (counter + 1) ])
+
+		else:
+			var child_index := base_node.get_child_count() - 1
+			var target_index := absi(type_index) - 1
+
+			while child_index >= 0:
+				var child_node := base_node.get_child(child_index)
+				if ClassDB.is_parent_class(child_node.get_class(), type_name):
+					counter += 1
+					if counter == target_index:
+						return child_node
+				child_index -= 1
+
+			push_error("[EIA] Step %d: Expected at least %d '%s' child node(s), found %d." % [ step_index, (target_index + 1), type_name, (counter + 1) ])
+
 		return null
 
 
-## Returns the N-th child node.
+## Returns the N-th child node of any type. If the given index is
+## negative, searches from the end.
 class GetChildIndexStep extends Step:
 	var child_index: int = 0
 
@@ -136,9 +155,15 @@ class GetChildIndexStep extends Step:
 		if not base_node:
 			return null
 
-		if base_node.get_child_count() <= child_index:
-			push_error("[EIA] Step %d: Expected at least %d child node(s), found %d." % [ step_index, (child_index + 1), base_node.get_child_count() ])
-			return null
+		if child_index >= 0:
+			if base_node.get_child_count() <= child_index:
+				push_error("[EIA] Step %d: Expected at least %d child node(s), found %d." % [ step_index, (child_index + 1), base_node.get_child_count() ])
+				return null
+
+		else:
+			if (base_node.get_child_count() + child_index) < 0:
+				push_error("[EIA] Step %d: Expected at least %d child node(s), found %d." % [ step_index, absi(child_index), base_node.get_child_count() ])
+				return null
 
 		return base_node.get_child(child_index)
 
