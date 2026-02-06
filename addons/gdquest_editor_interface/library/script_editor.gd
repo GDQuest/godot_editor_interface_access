@@ -16,6 +16,8 @@ class ScriptEditorDef extends Types.Definition:
 		]
 
 
+# Toolbar elements.
+
 class ScriptEditorToolbarDef extends Types.Definition:
 	func _init() -> void:
 		node_type = "HBoxContainer"
@@ -26,6 +28,113 @@ class ScriptEditorToolbarDef extends Types.Definition:
 			Types.GetChildTypeStep.new("HBoxContainer", 0),
 		]
 
+# NOTE: Menu buttons exist as individual buttons and not a menu bar
+# control. So unlike the main editor menu bar, we resolve buttons here
+# and not popups. Popups, of course, can also be resolved, if needed.
+
+class ScriptEditorToolbarFileMenuButtonDef extends Types.Definition:
+	func _init() -> void:
+		node_type = "MenuButton"
+		base_reference = Enums.NodePoint.SCRIPT_EDITOR_TOOLBAR
+
+		resolver_steps = [
+			Types.GetChildTypeStep.new("Button", 0),
+		]
+
+
+# NOTE: This "Search" button is the default one, but depending on the
+# currently open tab of the script editor it may be hidden, and a different
+# set of menu buttons is displayed in its place (including another button
+# also called "Search"). These secondary sets of buttons are dynamic and
+# managed by existing script/text editors, and cannot be resolved statically.
+class ScriptEditorToolbarSearchMenuButtonDef extends Types.Definition:
+	func _init() -> void:
+		node_type = "MenuButton"
+		base_reference = Enums.NodePoint.SCRIPT_EDITOR_TOOLBAR
+
+		resolver_steps = [
+			Types.GetChildTypeStep.new("Button", 1),
+		]
+
+
+class ScriptEditorToolbarDebugMenuButtonDef extends Types.Definition:
+	func _init() -> void:
+		node_type = "MenuButton"
+		base_reference = Enums.NodePoint.SCRIPT_EDITOR_TOOLBAR
+
+		resolver_steps = [
+			Types.GetChildTypeStep.new("Button", 2),
+		]
+
+
+class ScriptEditorToolbarCurrentLabelDef extends Types.Definition:
+	func _init() -> void:
+		node_type = "Label"
+		base_reference = Enums.NodePoint.SCRIPT_EDITOR_TOOLBAR
+
+		resolver_steps = [
+			Types.GetChildTypeStep.new("Label", 0),
+		]
+
+
+class ScriptEditorToolbarOnlineDocsButtonDef extends Types.Definition:
+	func _init() -> void:
+		node_type = "Button"
+		base_reference = Enums.NodePoint.SCRIPT_EDITOR_TOOLBAR
+
+		resolver_steps = [
+			Types.GetChildTypeStep.new("Button", 3),
+			Types.HasEditorIconStep.new("ExternalLink"),
+		]
+
+
+class ScriptEditorToolbarSearchHelpButtonDef extends Types.Definition:
+	func _init() -> void:
+		node_type = "Button"
+		base_reference = Enums.NodePoint.SCRIPT_EDITOR_TOOLBAR
+
+		resolver_steps = [
+			Types.GetChildTypeStep.new("Button", 4),
+			Types.HasEditorIconStep.new("HelpSearch"),
+		]
+
+
+# NOTE: Back and forth buttons inverse their icons in the RTL mode, so we
+# cannot rely on that.
+
+class ScriptEditorToolbarNavigateBackButtonDef extends Types.Definition:
+	func _init() -> void:
+		node_type = "Button"
+		base_reference = Enums.NodePoint.SCRIPT_EDITOR_TOOLBAR
+
+		resolver_steps = [
+			Types.GetChildTypeStep.new("Button", 5),
+			Types.HasSignalCallableStep.new("pressed", "ScriptEditor::_history_back"),
+		]
+
+
+class ScriptEditorToolbarNavigateForwardButtonDef extends Types.Definition:
+	func _init() -> void:
+		node_type = "Button"
+		base_reference = Enums.NodePoint.SCRIPT_EDITOR_TOOLBAR
+
+		resolver_steps = [
+			Types.GetChildTypeStep.new("Button", 6),
+			Types.HasSignalCallableStep.new("pressed", "ScriptEditor::_history_forward"),
+		]
+
+
+class ScriptEditorToolbarMakeFloatingButtonDef extends Types.Definition:
+	func _init() -> void:
+		node_type = "ScreenSelect"
+		base_reference = Enums.NodePoint.SCRIPT_EDITOR_TOOLBAR
+
+		resolver_steps = [
+			Types.GetChildTypeStep.new("ScreenSelect"),
+		]
+
+
+# Sidebar elements.
 
 class ScriptEditorSidebarDef extends Types.Definition:
 	func _init() -> void:
@@ -106,6 +215,8 @@ class ScriptEditorCurrentDocsIndexDef extends Types.Definition:
 			Types.GetChildTypeStep.new("ItemList", 1),
 		]
 
+
+# Script editor content.
 
 class ScriptEditorContainerDef extends Types.Definition:
 	func _init() -> void:
