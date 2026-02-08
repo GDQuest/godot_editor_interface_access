@@ -1,8 +1,8 @@
 @tool
 
-const Enums := preload("../utils/eia_enums.gd")
-const Types := preload("../utils/eia_resolver_types.gd")
-const Utils := preload("../utils/eia_resolver_utils.gd")
+const Enums := preload("../../utils/eia_enums.gd")
+const Types := preload("../../utils/eia_resolver_types.gd")
+const Utils := preload("../../utils/eia_resolver_utils.gd")
 
 
 ## The dock is only visible after the user has selected a TileMapLayer

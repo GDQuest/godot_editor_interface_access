@@ -1,11 +1,11 @@
 @tool
 
-const Enums := preload("../utils/eia_enums.gd")
-const Types := preload("../utils/eia_resolver_types.gd")
-const Utils := preload("../utils/eia_resolver_utils.gd")
+const Enums := preload("../../utils/eia_enums.gd")
+const Types := preload("../../utils/eia_resolver_types.gd")
+const Utils := preload("../../utils/eia_resolver_utils.gd")
 
 
-class SignalsDockDef extends Types.Definition:
+class GroupsDockDef extends Types.Definition:
 	func _init() -> void:
 		node_type = "EditorDock"
 		prefetch_references = [
@@ -25,7 +25,7 @@ class SignalsDockDef extends Types.Definition:
 		var custom_script := func(base_node: Node) -> Node:
 			var dock_locations := Utils.dock_get_locations()
 			for dock_container in dock_locations:
-				var dock := dock_container.find_child("Signals", false, false)
+				var dock := dock_container.find_child("Groups", false, false)
 				if dock:
 					return dock
 
@@ -34,3 +34,4 @@ class SignalsDockDef extends Types.Definition:
 		resolver_steps = [
 			Types.DoCustomStep.new(custom_script),
 		]
+

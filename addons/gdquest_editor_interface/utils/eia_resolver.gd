@@ -7,13 +7,33 @@
 const Enums := preload("./eia_enums.gd")
 const Types := preload("./eia_resolver_types.gd")
 
-# NOTE: Sometimes during testing the editor failed to properly load some scripts,
-# including only some library files. Unclear what the issue might be, but at least
-# for the library we can fall back onto using a hardcoded "include" file with
-# every library file listed. Not doing that for now, as the issue might as well
-# be with the testing environment on my end.
-
 const LIBRARY_ROOT := "../library"
+
+# Library is a collection of GDScript classes extending Types.Definition or
+# its subtypes. There must be one definition per Enums.NodePoint value, though
+# there can be auxiliary definitions which can be used as a basis for other
+# definitions, like in the case of Types.MultiDefinition.
+#
+# Each definition must be named after the enum value it maps to. If the enum
+# has a value
+#   CANVAS_ITEM_EDITOR
+# its corresponding definition must be called
+#   CanvasItemEditorDef
+# "Def" at the end is added to avoid naming conflicts with existing Godot types,
+# although it's not strictly necessary.
+#
+# The order of definitions or files in the file system is not important. At the
+# load time the files are simply collected with no resolution being done. Naturally,
+# scripts must be valid and internally consistent in their dependencies. In
+# practical reality, Godot will already load and parse them by the time we prepare
+# our cache here.
+#
+# However, you should be mindful of cyclic dependencies when defining resolution
+# steps. There are currently no checks to ensure that any given definition doesn't
+# rely on another definition which in turn needs the first definition, directly or
+# indirectly. In some cases this is not possible to determine at all. Just make sure
+# to run EIA.test_resolve() regularly. This problem, if introduced, would never appear
+# only on user machines.
 
 static var _library_cache: Array[GDScript] = [] # Keeps scripts' reference count up.
 static var _library_definition_map: Dictionary[String, GDScript] = {}
@@ -190,48 +210,75 @@ static func _reload_node_point_definitions() -> void:
 	_library_cache.clear()
 	_library_definition_map.clear()
 
+	# NOTE: Sometimes during testing the editor failed to properly load some scripts,
+	# including only some library files. Unclear what the issue might be, but at least
+	# for the library we can fall back onto using a hardcoded "include" file with
+	# every library file listed. Not doing that for now, as the issue might as well
+	# be with the testing environment on my end.
+
 	var library_root := _get_library_root()
-	var fs := DirAccess.open(library_root)
+	var fs := DirAccess.open("res://")
 	var error := DirAccess.get_open_error()
 	if error != OK:
-		push_error("[EIA] Failed to open library root for reading (code %d)." % [ error ])
+		push_error("[EIA] Failed to open project root for reading (code %d)." % [ error ])
 		return
 
-	error = fs.list_dir_begin()
-	if error != OK:
-		push_error("[EIA] Failed to start library root listing (code %d)." % [ error ])
-		return
+	var paths_to_explore: Array[String] = [ library_root ]
+	while not paths_to_explore.is_empty():
+		var path_root: String = paths_to_explore.pop_front()
 
-	# Automatically load every GDScript file from the library folder.
-	var file_name := fs.get_next()
-	while not file_name.is_empty():
-		if not file_name.ends_with(".gd"):
-			file_name = fs.get_next()
+		error = fs.change_dir(path_root)
+		if error != OK:
+			push_error("[EIA] Failed to open path '%s' for reading (code %d)." % [ path_root, error ])
 			continue
 
-		var script_path := library_root.path_join(file_name)
-		var script: GDScript = load(script_path)
-		if not script:
-			push_error("[EIA] Failed to load library file at '%s'." % [ script_path ])
-			file_name = fs.get_next()
+		error = fs.list_dir_begin()
+		if error != OK:
+			push_error("[EIA] Failed to start file listing at path '%s' (code %d)." % [ path_root, error ])
 			continue
 
-		# Keep a reference around so it doesn't get freed by accident.
-		_library_cache.push_back(script)
+		# Automatically load every GDScript file from the library folder.
+		var file_name := fs.get_next()
+		while not file_name.is_empty():
+			var file_path := path_root.path_join(file_name)
+			print_verbose("[EIA] Reading library path '%s'..." % [ file_path ])
 
-		# Get all inner classes via the constant map.
-		for name: String in script.get_script_constant_map():
-			if script[name] is not Script:
+			if fs.current_is_dir(): # The search is recursive.
+				paths_to_explore.push_back(file_path)
+				print_verbose("[EIA] Path at '%s' is a folder, added to lookup stack." % [ file_path ])
+				file_name = fs.get_next()
 				continue
-			if not _is_node_point_definition(script[name]):
+
+			if not file_name.ends_with(".gd"): # Only consider GDScript files.
+				file_name = fs.get_next()
 				continue
 
-			# Classes have a suffix to avoid naming collisions, but enums do not
-			# because they are public API of this library.
-			var clean_name := name.trim_suffix("Def")
-			_library_definition_map[clean_name] = script[name]
+			var script: GDScript = load(file_path)
+			if not script:
+				push_error("[EIA] Failed to load library file at '%s'." % [ file_path ])
+				file_name = fs.get_next()
+				continue
 
-		file_name = fs.get_next()
+			# Keep a reference around so it doesn't get freed by accident.
+			_library_cache.push_back(script)
+			var added_def_count := 0
+
+			# Get all inner classes via the constant map.
+			for name: String in script.get_script_constant_map():
+				if script[name] is not Script:
+					continue
+				if not _is_node_point_definition(script[name]):
+					continue
+
+				# Classes have a suffix to avoid naming collisions, but enum values
+				# do not because they need to be clean, as a part of the public API
+				# for this library.
+				var clean_name := name.trim_suffix("Def")
+				_library_definition_map[clean_name] = script[name]
+				added_def_count += 1
+
+			print_verbose("[EIA] Path at '%s' is a valid script, added %d new definitions." % [ file_path, added_def_count ])
+			file_name = fs.get_next()
 
 
 static func _get_node_point_definition(name: String) -> Types.Definition:
