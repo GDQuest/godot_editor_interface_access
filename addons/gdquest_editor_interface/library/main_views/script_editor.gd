@@ -5,6 +5,9 @@ const Types := preload("../../utils/eia_resolver_types.gd")
 const Utils := preload("../../utils/eia_resolver_utils.gd")
 
 
+## The root node of the script editor and class reference view.
+## Even if it is disabled via engine feature profiles, the node
+## is present in the tree, at the exact same spot.
 class ScriptEditorDef extends Types.Definition:
 	func _init() -> void:
 		node_type = "ScriptEditor"

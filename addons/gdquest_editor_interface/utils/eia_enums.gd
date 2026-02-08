@@ -2,7 +2,7 @@
 @tool
 
 enum NodePoint {
-	# 0 - General.
+	#region 0 - General.
 
 	# Core/root nodes.
 	EDITOR_MAIN_WINDOW = 1,
@@ -72,6 +72,8 @@ enum NodePoint {
 	SCENE_TABS_ADD_BUTTON,
 	SCENE_TABS_LIST_BUTTON,
 
+	#endregion
+
 	# 100_000 - Dialogs.
 
 	EDITOR_SETTINGS_DIALOG = 101_000,
@@ -89,6 +91,7 @@ enum NodePoint {
 	IMPORT_SCENE_SETTINGS_DIALOG = 150_000,
 	IMPORT_AUDIO_STREAM_SETTINGS_DIALOG = 151_000,
 	IMPORT_DYNAMIC_FONT_SETTINGS_DIALOG = 152_000,
+
 
 	# 200_000 - Docks (including bottom panel).
 
@@ -276,6 +279,7 @@ enum NodePoint {
 
 	#endregion
 
+
 	#region 1_000_000 - Canvas editor.
 
 	CANVAS_ITEM_EDITOR = 1_000_001,
@@ -307,8 +311,9 @@ enum NodePoint {
 
 	#region 2_000_000 - Spatial editor.
 
-	#endregion
+	NODE_3D_EDITOR = 2_000_001,
 
+	#endregion
 
 	#region 3_000_000 - Script editor.
 
@@ -341,15 +346,18 @@ enum NodePoint {
 
 	#region 4_000_000 - Game view.
 
-	#endregion
+	GAME_VIEW = 4_000_001,
 
+	#endregion
 
 	#region 5_000_000 - Asset library.
 
+	ASSET_LIBRARY = 5_000_001,
+
 	#endregion
 
 
-	# 100_000_000 - Reusable components.
+	#region 100_000_000 - Reusable components.
 
 	# These nodes are reused multiple times throughout the editor UI,
 	# e.g. one ScriptTextEditor per open script, or various inspector
@@ -374,6 +382,8 @@ enum NodePoint {
 	EDITOR_ZOOM_WIDGET_ZOOM_OUT_BUTTON = 100_003_001,
 	EDITOR_ZOOM_WIDGET_ZOOM_IN_BUTTON,
 	EDITOR_ZOOM_WIDGET_RESET_BUTTON,
+
+	#endregion
 }
 
 
