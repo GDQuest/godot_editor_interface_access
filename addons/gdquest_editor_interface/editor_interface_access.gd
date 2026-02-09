@@ -27,6 +27,14 @@ static func get_node(node_point: Enums.NodePoint, skip_cache: bool = false) -> N
 ## Returns null if the node, or one of its pre-requisites, cannot be resolved.
 ## Resolved nodes are never cached.
 static func get_node_relative(base_node: Node, node_point: Enums.NodePoint) -> Node:
+	# FIXME: Right now fetching subnodes of complex nodes via this relative API is
+	# rather cumbersome. We either have to always resolve nodes from the very top
+	# or require users to provide specific intermediate nodes, which aren't listed
+	# anywhere. We also can't rely on cache in any form.
+
+	# TODO: Cache results by base node, allow relative nodes to depend on other
+	# relative nodes, treat provided node as context, not as starting point.
+
 	return Resolver.resolve_node(node_point, base_node, true)
 
 
@@ -61,7 +69,19 @@ static func is_script_editor_active() -> bool:
 	return false
 
 
+static func get_script_editor_tab(tab_index: int) -> Control:
+	var script_tabs: TabContainer = get_node(Enums.NodePoint.SCRIPT_EDITOR_CONTAINER_TABS)
+	if tab_index < 0 || tab_index >= script_tabs.get_tab_count():
+		return null
+
+	return script_tabs.get_tab_control(tab_index)
+
+
 # Testing.
+
+# TODO: Add tests for reusable nodes.
+# Conceptually it can work only if we provide specific starting points for each rule,
+# which sounds not very manageable.
 
 ## Runs resolve (without cache) for every defined node point.
 static func test_resolve(skip_cache: bool = false) -> void:

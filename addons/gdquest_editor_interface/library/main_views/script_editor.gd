@@ -288,3 +288,44 @@ class ScriptTextEditorCodeEditorFooterBarDef extends Types.Definition:
 			Types.GetChildTypeStep.new("CodeTextEditor"),
 			Types.GetChildTypeStep.new("HBoxContainer", 0),
 		]
+
+
+class EditorHelpRichTextDef extends Types.Definition:
+	func _init() -> void:
+		node_type = "RichTextLabel"
+		relative_node_type = "EditorHelp"
+
+		resolver_steps = [
+			Types.GetChildTypeStep.new("RichTextLabel"),
+		]
+
+
+class EditorHelpFindBarDef extends Types.Definition:
+	func _init() -> void:
+		node_type = "FindBar"
+		relative_node_type = "EditorHelp"
+
+		resolver_steps = [
+			Types.GetChildTypeStep.new("FindBar"),
+		]
+
+
+class EditorHelpFooterBarDef extends Types.Definition:
+	func _init() -> void:
+		node_type = "HBoxContainer"
+		relative_node_type = "EditorHelp"
+
+		resolver_steps = [
+			Types.GetChildTypeStep.new("HBoxContainer", -1),
+		]
+
+
+class EditorHelpFooterSidebarButtonDef extends Types.Definition:
+	func _init() -> void:
+		node_type = "Button"
+		relative_node_type = "HBoxContainer" # From EditorHelpFooterBar above.
+
+		resolver_steps = [
+			Types.GetChildTypeStep.new("Button", 0),
+			Types.HasSignalCallableStep.new("pressed", "EditorHelp::_toggle_files_pressed"),
+		]
