@@ -74,6 +74,14 @@ static func get_script_editor_tab(tab_index: int) -> Control:
 	return script_tabs.get_tab_control(tab_index)
 
 
+static func get_dock_tabs(dock_node: EditorDock) -> TabBar:
+	var dock_owner := dock_node.get_parent()
+	if not dock_owner || not ClassDB.is_parent_class(dock_owner.get_class(), "TabContainer"):
+		return null
+
+	return (dock_owner as TabContainer).get_tab_bar()
+
+
 # Testing.
 
 ## Runs resolve (without cache) for every defined node point.
