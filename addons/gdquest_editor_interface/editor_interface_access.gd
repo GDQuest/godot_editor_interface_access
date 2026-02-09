@@ -32,6 +32,16 @@ static func get_node_relative(base_node: Node, node_point: Enums.NodePoint) -> N
 
 # Helpers.
 
+static func get_node_3d_viewport(viewport_index: int) -> Control:
+	var viewports_container := get_node(Enums.NodePoint.NODE_3D_EDITOR_VIEWPORTS)
+	var viewports := viewports_container.find_children("", "Node3DEditorViewport", false, false)
+
+	if viewport_index < 0 || viewport_index >= viewports.size():
+		return null
+
+	return viewports[viewport_index]
+
+
 static func is_script_editor_active() -> bool:
 	var script_editor := get_node(Enums.NodePoint.SCRIPT_EDITOR)
 	if not script_editor:
@@ -84,7 +94,7 @@ static func test_resolve(skip_cache: bool = false) -> void:
 
 		print("\t%s:" % [ key ])
 
-		if node_point >= 100_000_000: # Reusable nodes cannot be tested without context.
+		if Resolver.is_node_relative(node_point): # Reusable nodes cannot be tested without context.
 			skipped_count += 1
 			last_skipped_count += 1
 			print_rich("\t\t[i]SKIPPED[/i] (reusable)")

@@ -132,7 +132,7 @@ class CanvasItemEditorMainToolbarViewOptionsButtonDef       extends CanvasItemEd
 
 
 ## Toolbar container for contextual toolbars, populated by editor plugins.
-class CanvasItemEditorContextualToolbarDef extends Types.Definition:
+class CanvasItemEditorContextualToolbarsDef extends Types.Definition:
 	func _init() -> void:
 		node_type = "HBoxContainer"
 		base_reference = Enums.NodePoint.CANVAS_ITEM_EDITOR
@@ -142,4 +142,57 @@ class CanvasItemEditorContextualToolbarDef extends Types.Definition:
 			Types.GetChildTypeStep.new("FlowContainer", 0),
 			Types.GetChildTypeStep.new("PanelContainer", 0),
 			Types.GetChildIndexStep.new(0),
+		]
+
+
+# Viewport.
+
+# NOTE: Organization in the canvas item editor is pretty messy, the
+# node called "viewport" is actually a container for editor overlays,
+# and the actual Viewport "viewport" is its sibling. Their collective
+# parent is not typed or named at all.
+#
+# The structure, however, is exactly the same as spatial/3d editor.
+# There is a root control node, then there is a subviewport container
+# with the actual subviewport, and then there is another control for
+# overlays.
+#
+# So, for consistency and clearer logical structure we're naming
+# nodes here in the exact same manner. Which means the node with the
+# internal type of "CanvasItemEditorViewport" is NOT the one we
+# define with CanvasItemEditorViewportDef, it's the one we define
+# with CanvasItemEditorViewportOverlaysDef. And the enums are, of
+# cource, named accordingly.
+
+class CanvasItemEditorViewportDef extends Types.Definition:
+	func _init() -> void:
+		node_type = "Control"
+		base_reference = Enums.NodePoint.CANVAS_ITEM_EDITOR
+
+		resolver_steps = [
+			Types.GetChildTypeStep.new("SplitContainer", 0),
+			Types.GetChildTypeStep.new("SplitContainer", 0),
+			Types.GetChildTypeStep.new("SplitContainer", 0),
+			Types.GetChildTypeStep.new("Control"),
+		]
+
+
+class CanvasItemEditorViewportSceneRootDef extends Types.Definition:
+	func _init() -> void:
+		node_type = "SubViewport"
+		base_reference = Enums.NodePoint.CANVAS_ITEM_EDITOR_VIEWPORT
+
+		resolver_steps = [
+			Types.GetChildTypeStep.new("SubViewportContainer"),
+			Types.GetChildTypeStep.new("SubViewport"),
+		]
+
+
+class CanvasItemEditorViewportOverlaysDef extends Types.Definition:
+	func _init() -> void:
+		node_type = "CanvasItemEditorViewport"
+		base_reference = Enums.NodePoint.CANVAS_ITEM_EDITOR_VIEWPORT
+
+		resolver_steps = [
+			Types.GetChildTypeStep.new("CanvasItemEditorViewport", 0),
 		]

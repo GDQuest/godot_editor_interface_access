@@ -195,6 +195,22 @@ static func get_node_cached(node_point: Enums.NodePoint) -> Node:
 	return null
 
 
+static func is_node_relative(node_point: Enums.NodePoint) -> bool:
+	var node_point_name := Enums.get_node_point_name(node_point)
+	if node_point_name.is_empty():
+		push_error("[EIA] Unknown node point value (%d)." % [ node_point ])
+		return false
+
+	# Find the definition by name (definitions are preloaded).
+
+	var definition := _get_node_point_definition(node_point_name)
+	if not definition:
+		push_error("[EIA] Unknown node point definition (%s)." % [ node_point_name ])
+		return false
+
+	return not definition.relative_node_type.is_empty()
+
+
 # Helpers.
 
 static func _get_library_root() -> String:
