@@ -7,7 +7,7 @@ const Utils := preload("../../utils/eia_resolver_utils.gd")
 
 class GroupsDockDef extends Types.Definition:
 	func _init() -> void:
-		node_type = "EditorDock"
+		node_type = "GroupsDock"
 		prefetch_references = [
 			Enums.NodePoint.LAYOUT_ROOT,
 			Enums.NodePoint.LAYOUT_DOCK_LEFT_LEFT_TOP,
@@ -35,3 +35,12 @@ class GroupsDockDef extends Types.Definition:
 			Types.DoCustomStep.new(custom_script),
 		]
 
+
+class GroupsEditorDef extends Types.Definition:
+	func _init() -> void:
+		node_type = "GroupsEditor"
+		base_reference = Enums.NodePoint.GROUPS_DOCK
+
+		resolver_steps = [
+			Types.GetChildTypeStep.new("GroupsEditor"),
+		]

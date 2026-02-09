@@ -48,6 +48,9 @@ class SceneTabsListButtonDef extends Types.Definition:
 		]
 
 
+# FIXME: This button can be on the bottom panel, if the bottom panel is expanded and
+# scene tabs are not visible.
+
 class LayoutDistractionFreeButtonDef extends Types.Definition:
 	func _init() -> void:
 		node_type = "Button"

@@ -7,7 +7,7 @@ const Utils := preload("../../utils/eia_resolver_utils.gd")
 
 class OutputDockDef extends Types.Definition:
 	func _init() -> void:
-		node_type = "EditorDock"
+		node_type = "EditorLog"
 		prefetch_references = [
 			Enums.NodePoint.LAYOUT_ROOT,
 			Enums.NodePoint.LAYOUT_DOCK_LEFT_LEFT_TOP,
@@ -33,4 +33,39 @@ class OutputDockDef extends Types.Definition:
 
 		resolver_steps = [
 			Types.DoCustomStep.new(custom_script),
+		]
+
+
+class OutputDockRichTextDef extends Types.Definition:
+	func _init() -> void:
+		node_type = "RichTextLabel"
+		base_reference = Enums.NodePoint.OUTPUT_DOCK
+
+		resolver_steps = [
+			Types.GetChildTypeStep.new("HBoxContainer", 0),
+			Types.GetChildTypeStep.new("VBoxContainer", 0),
+			Types.GetChildTypeStep.new("RichTextLabel"),
+		]
+
+
+class OutputDockTextFilterDef extends Types.Definition:
+	func _init() -> void:
+		node_type = "LineEdit"
+		base_reference = Enums.NodePoint.OUTPUT_DOCK
+
+		resolver_steps = [
+			Types.GetChildTypeStep.new("HBoxContainer", 0),
+			Types.GetChildTypeStep.new("VBoxContainer", 0),
+			Types.GetChildTypeStep.new("LineEdit"),
+		]
+
+
+class OutputDockToolbarDef extends Types.Definition:
+	func _init() -> void:
+		node_type = "VBoxContainer"
+		base_reference = Enums.NodePoint.OUTPUT_DOCK
+
+		resolver_steps = [
+			Types.GetChildTypeStep.new("HBoxContainer", 0),
+			Types.GetChildTypeStep.new("VBoxContainer", 1),
 		]
