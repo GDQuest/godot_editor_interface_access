@@ -270,10 +270,9 @@ class ScriptTextEditorCodeEditorCodeEditDef extends Types.Definition:
 	func _init() -> void:
 		node_type = "CodeEdit"
 		relative_node_type = "ScriptTextEditor"
+		base_reference = Enums.NodePoint.SCRIPT_TEXT_EDITOR_CODE_EDITOR
 
 		resolver_steps = [
-			Types.GetChildTypeStep.new("VSplitContainer", 0),
-			Types.GetChildTypeStep.new("CodeTextEditor"),
 			Types.GetChildTypeStep.new("CodeEdit"),
 		]
 
@@ -282,10 +281,41 @@ class ScriptTextEditorCodeEditorFooterBarDef extends Types.Definition:
 	func _init() -> void:
 		node_type = "HBoxContainer"
 		relative_node_type = "ScriptTextEditor"
+		base_reference = Enums.NodePoint.SCRIPT_TEXT_EDITOR_CODE_EDITOR
 
 		resolver_steps = [
-			Types.GetChildTypeStep.new("VSplitContainer", 0),
+			Types.GetChildTypeStep.new("HBoxContainer", 0),
+		]
+
+
+class TextEditorCodeEditorDef extends Types.Definition:
+	func _init() -> void:
+		node_type = "CodeTextEditor"
+		relative_node_type = "TextEditor"
+
+		resolver_steps = [
 			Types.GetChildTypeStep.new("CodeTextEditor"),
+		]
+
+
+class TextEditorCodeEditorCodeEditDef extends Types.Definition:
+	func _init() -> void:
+		node_type = "CodeEdit"
+		relative_node_type = "TextEditor"
+		base_reference = Enums.NodePoint.TEXT_EDITOR_CODE_EDITOR
+
+		resolver_steps = [
+			Types.GetChildTypeStep.new("CodeEdit"),
+		]
+
+
+class TextEditorCodeEditorFooterBarDef extends Types.Definition:
+	func _init() -> void:
+		node_type = "HBoxContainer"
+		relative_node_type = "TextEditor"
+		base_reference = Enums.NodePoint.TEXT_EDITOR_CODE_EDITOR
+
+		resolver_steps = [
 			Types.GetChildTypeStep.new("HBoxContainer", 0),
 		]
 
