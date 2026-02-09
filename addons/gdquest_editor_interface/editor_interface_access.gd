@@ -26,9 +26,8 @@ static func get_node(node_point: Enums.NodePoint, skip_cache: bool = false) -> N
 ## definition for this node point has a base reference, it will be ignored.
 ## Returns null if the node, or one of its pre-requisites, cannot be resolved.
 ## Resolved nodes are never cached.
-static func get_node_relative(base_node: Node, node_point: Enums.NodePoint) -> Node:
-	# TODO: Cache results by base node.
-	return Resolver.resolve_node(node_point, base_node, true)
+static func get_node_relative(base_node: Node, node_point: Enums.NodePoint, skip_cache: bool = false) -> Node:
+	return Resolver.resolve_node(node_point, base_node, skip_cache)
 
 
 # Helpers.
@@ -63,6 +62,11 @@ static func is_script_editor_active() -> bool:
 
 
 static func get_script_editor_tab(tab_index: int) -> Control:
+	# NOTE: Script editor tabs at first exist in an "uninstantiated" mode,
+	# until the user clicks on it and the actual contents are spawned. It's
+	# probably a performance/memory saving measure, but that means we cannot
+	# be sure internal elements exist.
+
 	var script_tabs: TabContainer = get_node(Enums.NodePoint.SCRIPT_EDITOR_CONTAINER_TABS)
 	if tab_index < 0 || tab_index >= script_tabs.get_tab_count():
 		return null

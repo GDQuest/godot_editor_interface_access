@@ -38,6 +38,7 @@ const LIBRARY_ROOT := "../library"
 static var _library_cache: Array[GDScript] = [] # Keeps scripts' reference count up.
 static var _library_definition_map: Dictionary[String, GDScript] = {}
 static var _node_cache: Dictionary[Enums.NodePoint, Node] = {}
+static var _context_node_cache: Dictionary[int, Dictionary] = {} # InstanceID, Dictionary[Enums.NodePoint, Node]
 
 
 static func _static_init() -> void:
@@ -45,8 +46,15 @@ static func _static_init() -> void:
 
 
 static func resolve_node(node_point: Enums.NodePoint, context_node: Node = null, skip_cache: bool = false) -> Node:
-	if _node_cache.has(node_point):
-		return _node_cache[node_point]
+	# Check the cache for existing entries to avoid expensive resolution.
+
+	if context_node:
+		var context_cache := _get_context_cache(context_node)
+		if context_cache.has(node_point):
+			return context_cache[node_point]
+	else:
+		if _node_cache.has(node_point):
+			return _node_cache[node_point]
 
 	# Convert node point into a string identifier.
 
@@ -131,7 +139,11 @@ static func _resolve_single_node(definition: Types.Definition, node_point: Enums
 
 	# Cache the result, if necessary.
 	if not skip_cache:
-		_node_cache[node_point] = current_node
+		if context_node:
+			var context_cache := _get_context_cache(context_node)
+			context_cache[node_point] = current_node
+		else:
+			_node_cache[node_point] = current_node
 
 	return current_node
 
@@ -194,14 +206,23 @@ static func _resolve_multi_node(definition: Types.MultiDefinition, node_point: E
 
 		# Cache the result, if necessary.
 		if not skip_cache:
-			_node_cache[expected_node_point] = current_node
+			if context_node:
+				var context_cache := _get_context_cache(context_node)
+				context_cache[node_point] = current_node
+			else:
+				_node_cache[expected_node_point] = current_node
 
 	return target_node
 
 
-static func get_node_cached(node_point: Enums.NodePoint) -> Node:
-	if _node_cache.has(node_point):
-		return _node_cache[node_point]
+static func get_node_cached(node_point: Enums.NodePoint, context_node: Node = null) -> Node:
+	if context_node:
+		var context_cache := _get_context_cache(context_node)
+		if context_cache.has(node_point):
+			return context_cache[node_point]
+	else:
+		if _node_cache.has(node_point):
+			return _node_cache[node_point]
 
 	return null
 
@@ -329,3 +350,13 @@ static func _is_node_point_definition(script: Script) -> bool:
 		base_script = base_script.get_base_script()
 
 	return false
+
+
+static func _get_context_cache(context_node: Node) -> Dictionary[Enums.NodePoint, Node]:
+	var context_id := context_node.get_instance_id()
+
+	if context_id not in _context_node_cache:
+		var cache: Dictionary[Enums.NodePoint, Node] = {} # Force typing.
+		_context_node_cache[context_id] = cache
+
+	return _context_node_cache[context_id]
