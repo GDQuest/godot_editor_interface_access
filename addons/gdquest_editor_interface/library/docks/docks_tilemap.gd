@@ -176,34 +176,35 @@ class TileMapToolbarsDef extends Types.MultiDefinition:
 			Types.DoCustomMultiStep.new(custom_script),
 		]
 
-class TileMapCommonToolbarPreviousButton      extends TileMapToolbarsDef: pass
-class TileMapCommonToolbarNextButton          extends TileMapToolbarsDef: pass
-class TileMapCommonToolbarLayersButton        extends TileMapToolbarsDef: pass
-class TileMapCommonToolbarHighlightButton     extends TileMapToolbarsDef: pass
-class TileMapCommonToolbarGridButton          extends TileMapToolbarsDef: pass
-class TileMapCommonToolbarMenuButton          extends TileMapToolbarsDef: pass
+class TileMapCommonToolbarPreviousButtonDef      extends TileMapToolbarsDef: pass
+class TileMapCommonToolbarNextButtonDef          extends TileMapToolbarsDef: pass
+class TileMapCommonToolbarSelectLayerButtonDef   extends TileMapToolbarsDef: pass
+class TileMapCommonToolbarSelectAllButtonDef     extends TileMapToolbarsDef: pass
+class TileMapCommonToolbarHighlightButtonDef     extends TileMapToolbarsDef: pass
+class TileMapCommonToolbarGridButtonDef          extends TileMapToolbarsDef: pass
+class TileMapCommonToolbarMenuButtonDef          extends TileMapToolbarsDef: pass
 
-class TileMapTilesToolbarSelectButton         extends TileMapToolbarsDef: pass
-class TileMapTilesToolbarPaintButton          extends TileMapToolbarsDef: pass
-class TileMapTilesToolbarLineButton           extends TileMapToolbarsDef: pass
-class TileMapTilesToolbarRectButton           extends TileMapToolbarsDef: pass
-class TileMapTilesToolbarBucketButton         extends TileMapToolbarsDef: pass
-class TileMapTilesToolbarPickerButton         extends TileMapToolbarsDef: pass
-class TileMapTilesToolbarEraserButton         extends TileMapToolbarsDef: pass
-class TileMapTilesToolbarRotateLeftButton     extends TileMapToolbarsDef: pass
-class TileMapTilesToolbarRotateRightButton    extends TileMapToolbarsDef: pass
-class TileMapTilesToolbarFlipHButton          extends TileMapToolbarsDef: pass
-class TileMapTilesToolbarFlipVButton          extends TileMapToolbarsDef: pass
-class TileMapTilesToolbarContiguousButton     extends TileMapToolbarsDef: pass
-class TileMapTilesToolbarRandomButton         extends TileMapToolbarsDef: pass
+class TileMapTilesToolbarSelectButtonDef         extends TileMapToolbarsDef: pass
+class TileMapTilesToolbarPaintButtonDef          extends TileMapToolbarsDef: pass
+class TileMapTilesToolbarLineButtonDef           extends TileMapToolbarsDef: pass
+class TileMapTilesToolbarRectButtonDef           extends TileMapToolbarsDef: pass
+class TileMapTilesToolbarBucketButtonDef         extends TileMapToolbarsDef: pass
+class TileMapTilesToolbarPickerButtonDef         extends TileMapToolbarsDef: pass
+class TileMapTilesToolbarEraserButtonDef         extends TileMapToolbarsDef: pass
+class TileMapTilesToolbarRotateLeftButtonDef     extends TileMapToolbarsDef: pass
+class TileMapTilesToolbarRotateRightButtonDef    extends TileMapToolbarsDef: pass
+class TileMapTilesToolbarFlipHButtonDef          extends TileMapToolbarsDef: pass
+class TileMapTilesToolbarFlipVButtonDef          extends TileMapToolbarsDef: pass
+class TileMapTilesToolbarContiguousButtonDef     extends TileMapToolbarsDef: pass
+class TileMapTilesToolbarRandomButtonDef         extends TileMapToolbarsDef: pass
 
-class TileMapTerrainsToolbarPaintButton       extends TileMapToolbarsDef: pass
-class TileMapTerrainsToolbarLineButton        extends TileMapToolbarsDef: pass
-class TileMapTerrainsToolbarRectButton        extends TileMapToolbarsDef: pass
-class TileMapTerrainsToolbarBucketButton      extends TileMapToolbarsDef: pass
-class TileMapTerrainsToolbarPickerButton      extends TileMapToolbarsDef: pass
-class TileMapTerrainsToolbarEraserButton      extends TileMapToolbarsDef: pass
-class TileMapTerrainsToolbarContiguousButton  extends TileMapToolbarsDef: pass
+class TileMapTerrainsToolbarPaintButtonDef       extends TileMapToolbarsDef: pass
+class TileMapTerrainsToolbarLineButtonDef        extends TileMapToolbarsDef: pass
+class TileMapTerrainsToolbarRectButtonDef        extends TileMapToolbarsDef: pass
+class TileMapTerrainsToolbarBucketButtonDef      extends TileMapToolbarsDef: pass
+class TileMapTerrainsToolbarPickerButtonDef      extends TileMapToolbarsDef: pass
+class TileMapTerrainsToolbarEraserButtonDef      extends TileMapToolbarsDef: pass
+class TileMapTerrainsToolbarContiguousButtonDef  extends TileMapToolbarsDef: pass
 
 
 # Content roots of the TileMap editor's tabs.
