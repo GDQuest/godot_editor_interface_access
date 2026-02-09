@@ -44,7 +44,7 @@ static func _static_init() -> void:
 	_reload_node_point_definitions()
 
 
-static func resolve_node(node_point: Enums.NodePoint, base_node: Node = null, skip_cache: bool = false) -> Node:
+static func resolve_node(node_point: Enums.NodePoint, context_node: Node = null, skip_cache: bool = false) -> Node:
 	if _node_cache.has(node_point):
 		return _node_cache[node_point]
 
@@ -79,34 +79,37 @@ static func resolve_node(node_point: Enums.NodePoint, base_node: Node = null, sk
 			push_error("[EIA] Node point definition (%s) couldn't satisfy its prerequisites." % [ node_point_name ])
 			return null
 
-	# Note that base_node base be passed even for definitions which do not
-	# mandate a relative base. In that case we do no check them for any
-	# validity, but they still replace the defined base reference.
+	# Note that the context node can be passed even for definitions which
+	# do not mandate a relative base. In that case we do not check them for
+	# any validity, but they are still used for base reference resolution.
 	if not definition.relative_node_type.is_empty():
-		if not base_node:
+		if not context_node:
 			push_error("[EIA] Node point definition (%s) expects a relative base node." % [ node_point_name ])
 			return null
 
-		if not ClassDB.is_parent_class(base_node.get_class(), definition.relative_node_type):
-			push_error("[EIA] Node point definition (%s) expects base to be '%s', but '%s' was given." % [ node_point_name, definition.relative_node_type, base_node.get_class() ])
+		if not ClassDB.is_parent_class(context_node.get_class(), definition.relative_node_type):
+			push_error("[EIA] Node point definition (%s) expects base to be '%s', but '%s' was given." % [ node_point_name, definition.relative_node_type, context_node.get_class() ])
 			return null
 
 	# Resolve the node point using the definition.
 
 	if definition is Types.MultiDefinition:
-		return _resolve_multi_node(definition, node_point, base_node, skip_cache)
+		return _resolve_multi_node(definition, node_point, context_node, skip_cache)
 	else:
-		return _resolve_single_node(definition, node_point, base_node, skip_cache)
+		return _resolve_single_node(definition, node_point, context_node, skip_cache)
 
 	return null
 
 
-static func _resolve_single_node(definition: Types.Definition, node_point: Enums.NodePoint, base_node: Node, skip_cache: bool) -> Node:
+static func _resolve_single_node(definition: Types.Definition, node_point: Enums.NodePoint, context_node: Node, skip_cache: bool) -> Node:
+	# If there is a context node, use it as base. If there is a base reference,
+	# resolve it using current base (either null or the context node).
+
 	var current_node: Node = null
-	if base_node:
-		current_node = base_node
-	elif definition.base_reference != -1:
-		current_node = resolve_node(definition.base_reference, null, skip_cache)
+	if context_node:
+		current_node = context_node
+	if definition.base_reference != -1:
+		current_node = resolve_node(definition.base_reference, current_node, skip_cache)
 
 	# Resolve the node.
 	for i in definition.resolver_steps.size():
@@ -133,25 +136,33 @@ static func _resolve_single_node(definition: Types.Definition, node_point: Enums
 	return current_node
 
 
-static func _resolve_multi_node(definition: Types.MultiDefinition, node_point: Enums.NodePoint, base_node: Node, skip_cache: bool) -> Node:
+static func _resolve_multi_node(definition: Types.MultiDefinition, node_point: Enums.NodePoint, context_node: Node, skip_cache: bool) -> Node:
 	if definition.node_type_map.is_empty() || node_point not in definition.node_type_map:
 		var node_point_name := Enums.get_node_point_name(node_point)
 		push_error("[EIA] Expected node point value (%d) is missing from multi-node definition (%s)." % [ node_point, node_point_name ])
 		return null
 
-	# Resolve nodes together.
+	# If there is a context node, use it as base. If there is a base reference,
+	# resolve it using current base (either null or the context node).
+	# Only one node may be the output of all this.
+
+	var base_node: Node = null
+	if context_node:
+		base_node = context_node
+	if definition.base_reference != -1:
+		base_node = resolve_node(definition.base_reference, base_node, skip_cache)
+
 	var current_nodes: Array[Node] = []
 	if base_node:
 		current_nodes.push_back(base_node)
-	elif definition.base_reference != -1:
-		var base_resolved := resolve_node(definition.base_reference, null, skip_cache)
-		current_nodes.push_back(base_resolved)
 
-	# Validate results.
+	# Resolve nodes together.
 
 	for i in definition.resolver_steps.size():
 		var step := definition.resolver_steps[i]
 		current_nodes = step.resolve_multi(current_nodes, i)
+
+	# Validate results.
 
 	if current_nodes.size() != definition.node_type_map.size():
 		push_error("[EIA] Number of resolved nodes (%d) doesn't match expected number (%d)." % [ current_nodes.size(), definition.node_type_map.size() ])

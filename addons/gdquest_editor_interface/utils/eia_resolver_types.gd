@@ -27,10 +27,12 @@ class Definition:
 	## value is passed to the first step as input. Can be -1 if no base
 	## reference is needed (then the first step must be a custom one).
 	var base_reference: int = -1
-	## If not empty, base reference above is ignored and the definition
-	## expects a base node to be provided explicitly using EIA.get_node_relative().
-	## The type of the provided node is validated against this value, and
-	## the node is passed to the first step as input.
+	## If not empty, this definition is for a reusable component and can
+	## only be resolved if a context node provided using EIA.get_node_relative().
+	## The type of the provided node is validated against this value. If
+	## base_reference is a valid value, it is then resolved (using the same
+	## context node) and passed to the first step as input. If not, the
+	## context node is provided as input instead.
 	var relative_node_type: String = ""
 
 	## Steps for the resolver to transform the base reference into the

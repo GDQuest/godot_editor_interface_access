@@ -323,7 +323,8 @@ class EditorHelpFooterBarDef extends Types.Definition:
 class EditorHelpFooterSidebarButtonDef extends Types.Definition:
 	func _init() -> void:
 		node_type = "Button"
-		relative_node_type = "HBoxContainer" # From EditorHelpFooterBar above.
+		relative_node_type = "EditorHelp"
+		base_reference = Enums.NodePoint.EDITOR_HELP_FOOTER_BAR
 
 		resolver_steps = [
 			Types.GetChildTypeStep.new("Button", 0),

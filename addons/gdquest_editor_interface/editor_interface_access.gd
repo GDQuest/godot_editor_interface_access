@@ -27,14 +27,7 @@ static func get_node(node_point: Enums.NodePoint, skip_cache: bool = false) -> N
 ## Returns null if the node, or one of its pre-requisites, cannot be resolved.
 ## Resolved nodes are never cached.
 static func get_node_relative(base_node: Node, node_point: Enums.NodePoint) -> Node:
-	# FIXME: Right now fetching subnodes of complex nodes via this relative API is
-	# rather cumbersome. We either have to always resolve nodes from the very top
-	# or require users to provide specific intermediate nodes, which aren't listed
-	# anywhere. We also can't rely on cache in any form.
-
-	# TODO: Cache results by base node, allow relative nodes to depend on other
-	# relative nodes, treat provided node as context, not as starting point.
-
+	# TODO: Cache results by base node.
 	return Resolver.resolve_node(node_point, base_node, true)
 
 
