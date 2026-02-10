@@ -2,6 +2,8 @@
 
 const Enums := preload("../utils/eia_enums.gd")
 const Types := preload("../utils/eia_resolver_types.gd")
+const Utils := preload("../utils/eia_resolver_utils.gd")
+const Resolver := preload("../utils/eia_resolver.gd")
 
 
 ## The main Window node of the editor, the root node.
@@ -192,4 +194,143 @@ class LayoutDockHiddenContainerDef extends Types.Definition:
 		# especially at launch. But at this time its order is fixed, so eh.
 		resolver_steps = [
 			Types.GetChildIndexStep.new(1),
+		]
+
+
+# Layout-affecting buttons.
+
+class LayoutDistractionFreeButtonDef extends Types.Definition:
+	func _init() -> void:
+		node_type = "Button"
+		prefetch_references = [
+			Enums.NodePoint.SCENE_TABS_TAB_BAR,
+			Enums.NodePoint.LAYOUT_EXPAND_BOTTOM_BUTTON,
+		]
+
+		# NOTE: When the bottom panel is expanded, this button is moved inside of it.
+		# The button instance is the same, so once resolved, this is not an issue.
+		# The bottom panel also cannot be expanded on editor start (so far), but we
+		# don't know when the node is going to be resolved by user code.
+		# So check everything!
+
+		var custom_script := func(base_node: Node) -> Node:
+			var button_siblings: Array[Node] = [
+				Resolver.get_node_cached(Enums.NodePoint.SCENE_TABS_TAB_BAR),
+				Resolver.get_node_cached(Enums.NodePoint.LAYOUT_EXPAND_BOTTOM_BUTTON),
+			]
+
+			for sibling in button_siblings:
+				if not sibling:
+					continue # Resolver failed?
+
+				var owner_node := sibling.get_parent()
+				var buttons := owner_node.find_children("", "Button", false, false)
+				for button: Button in buttons:
+					if Utils.node_has_signal_callable(button, "pressed", "EditorNode::_toggle_distraction_free_mode"):
+						return button
+
+			return null
+
+		resolver_steps = [
+			Types.DoCustomStep.new(custom_script),
+			Types.HasEditorIconStep.new("DistractionFree"),
+		]
+
+
+class LayoutExpandBottomButtonDef extends Types.Definition:
+	func _init() -> void:
+		node_type = "Button"
+		base_reference = Enums.NodePoint.LAYOUT_DOCK_MIDDLE_BOTTOM
+
+		var get_tab_bar := func(base_node: Node) -> Node:
+			return (base_node as TabContainer).get_tab_bar()
+
+		var custom_script := func(base_node: Node) -> Node:
+			var buttons := base_node.find_children("", "Button", false, false)
+			for button: Button in buttons:
+				if Utils.node_has_signal_callable(button, "toggled", "EditorBottomPanel::_expand_button_toggled"):
+					return button
+
+			return null
+
+		resolver_steps = [
+			Types.DoCustomStep.new(get_tab_bar),
+			Types.GetChildTypeStep.new("HBoxContainer", 0),
+			Types.DoCustomStep.new(custom_script),
+			Types.HasEditorIconStep.new("ExpandBottomDock"),
+		]
+
+
+class LayoutPinBottomButtonDef extends Types.Definition:
+	func _init() -> void:
+		node_type = "Button"
+		base_reference = Enums.NodePoint.LAYOUT_DOCK_MIDDLE_BOTTOM
+
+		var get_tab_bar := func(base_node: Node) -> Node:
+			return (base_node as TabContainer).get_tab_bar()
+
+		var custom_script := func(base_node: Node) -> Node:
+			var buttons := base_node.find_children("", "Button", false, false)
+			for button: Button in buttons:
+				if Utils.node_has_signal_callable(button, "toggled", "EditorBottomPanel::_pin_button_toggled"):
+					return button
+
+			return null
+
+		resolver_steps = [
+			Types.DoCustomStep.new(get_tab_bar),
+			Types.GetChildTypeStep.new("HBoxContainer", 0),
+			Types.DoCustomStep.new(custom_script),
+			Types.HasEditorIconStep.new("Pin"),
+		]
+
+
+# Extra editor elements.
+
+class RenderingModeButtonDef extends Types.Definition:
+	func _init() -> void:
+		node_type = "OptionButton"
+		base_reference = Enums.NodePoint.LAYOUT_TITLE_BAR
+
+		resolver_steps = [
+			Types.GetChildTypeStep.new("HBoxContainer", -1),
+			Types.GetChildTypeStep.new("OptionButton", 0),
+		]
+
+
+class EditorUpdateSpinnerDef extends Types.Definition:
+	func _init() -> void:
+		node_type = "MenuButton"
+		base_reference = Enums.NodePoint.LAYOUT_TITLE_BAR
+
+		resolver_steps = [
+			Types.GetChildTypeStep.new("HBoxContainer", -1),
+			Types.GetChildTypeStep.new("MenuButton", 0),
+		]
+
+
+class EditorToasterDef extends Types.Definition:
+	func _init() -> void:
+		node_type = "EditorToaster"
+
+		var custom_script := func(base_node: Node) -> Node:
+			return EditorInterface.get_editor_toaster()
+
+		resolver_steps = [
+			Types.DoCustomStep.new(custom_script),
+		]
+
+
+class EditorVersionButtonDef extends Types.Definition:
+	func _init() -> void:
+		node_type = "EditorVersionButton"
+		base_reference = Enums.NodePoint.LAYOUT_DOCK_MIDDLE_BOTTOM
+
+		var get_tab_bar := func(base_node: Node) -> Node:
+			return (base_node as TabContainer).get_tab_bar()
+
+		resolver_steps = [
+			Types.DoCustomStep.new(get_tab_bar),
+			Types.GetChildTypeStep.new("HBoxContainer", 0),
+			Types.GetChildTypeStep.new("EditorVersionButton"),
 		]

@@ -46,18 +46,3 @@ class SceneTabsListButtonDef extends Types.Definition:
 			Types.GetChildTypeStep.new("Button", 0),
 			Types.HasEditorIconStep.new("GuiTabMenuHl"),
 		]
-
-
-# FIXME: This button can be on the bottom panel, if the bottom panel is expanded and
-# scene tabs are not visible.
-
-class LayoutDistractionFreeButtonDef extends Types.Definition:
-	func _init() -> void:
-		node_type = "Button"
-		base_reference = Enums.NodePoint.SCENE_TABS_TAB_BAR
-
-		resolver_steps = [
-			Types.GetParentCountStep.new(1),
-			Types.GetChildTypeStep.new("Button", 1),
-			Types.HasEditorIconStep.new("DistractionFree"),
-		]
