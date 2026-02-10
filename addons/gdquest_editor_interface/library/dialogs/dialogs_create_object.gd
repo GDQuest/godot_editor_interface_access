@@ -5,6 +5,36 @@ const Types := preload("../../utils/eia_resolver_types.gd")
 const Utils := preload("../../utils/eia_resolver_utils.gd")
 
 
+class CreateObjectDialogOkButtonDef extends Types.Definition:
+	func _init() -> void:
+		node_type = "Button"
+		relative_node_type = "CreateDialog"
+
+		var custom_script := func(base_node: Node) -> Node:
+			return (base_node as ConfirmationDialog).get_ok_button()
+
+		resolver_steps = [
+			Types.DoCustomStep.new(custom_script),
+		]
+
+
+class CreateObjectDialogCancelButtonDef extends Types.Definition:
+	func _init() -> void:
+		node_type = "Button"
+		relative_node_type = "CreateDialog"
+
+		var custom_script := func(base_node: Node) -> Node:
+			return (base_node as ConfirmationDialog).get_cancel_button()
+
+		resolver_steps = [
+			Types.DoCustomStep.new(custom_script),
+		]
+
+
+# Dialog panels. The view is split into 4 segments using nested split
+# containers. One splits everything into two columns, the other two
+# split their columns in two.
+
 class CreateObjectDialogPanelsDef extends Types.Definition:
 	func _init() -> void:
 		node_type = "HSplitContainer"
