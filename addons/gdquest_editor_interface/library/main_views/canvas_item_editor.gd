@@ -196,3 +196,173 @@ class CanvasItemEditorViewportOverlaysDef extends Types.Definition:
 		resolver_steps = [
 			Types.GetChildTypeStep.new("CanvasItemEditorViewport", 0),
 		]
+
+
+# Snap options dialog.
+
+class CanvasItemEditorSnapDialogDef extends Types.Definition:
+	func _init() -> void:
+		node_type = "SnapDialog"
+		base_reference = Enums.NodePoint.CANVAS_ITEM_EDITOR
+
+		resolver_steps = [
+			Types.GetChildTypeStep.new("SnapDialog"),
+		]
+
+
+class CanvasItemEditorSnapDialogOkButtonDef extends Types.Definition:
+	func _init() -> void:
+		node_type = "Button"
+		base_reference = Enums.NodePoint.CANVAS_ITEM_EDITOR_SNAP_DIALOG
+
+		var custom_script := func(base_node: Node) -> Node:
+			return (base_node as ConfirmationDialog).get_ok_button()
+
+		resolver_steps = [
+			Types.DoCustomStep.new(custom_script),
+		]
+
+
+class CanvasItemEditorSnapDialogCancelButtonDef extends Types.Definition:
+	func _init() -> void:
+		node_type = "Button"
+		base_reference = Enums.NodePoint.CANVAS_ITEM_EDITOR_SNAP_DIALOG
+
+		var custom_script := func(base_node: Node) -> Node:
+			return (base_node as ConfirmationDialog).get_cancel_button()
+
+		resolver_steps = [
+			Types.DoCustomStep.new(custom_script),
+		]
+
+
+class CanvasItemEditorSnapDialogOptionsDef extends Types.Definition:
+	func _init() -> void:
+		node_type = "VBoxContainer"
+		base_reference = Enums.NodePoint.CANVAS_ITEM_EDITOR_SNAP_DIALOG
+
+		resolver_steps = [
+			Types.GetChildIndexStep.new(0),
+		]
+
+
+# Snap option groups.
+
+class CanvasItemEditorSnapDialogGridOptionsDef extends Types.Definition:
+	func _init() -> void:
+		node_type = "GridContainer"
+		base_reference = Enums.NodePoint.CANVAS_ITEM_EDITOR_SNAP_DIALOG_OPTIONS
+
+		resolver_steps = [
+			Types.GetChildTypeStep.new("GridContainer", 0),
+		]
+
+
+class CanvasItemEditorSnapDialogGridOffsetXDef extends Types.Definition:
+	func _init() -> void:
+		node_type = "SpinBox"
+		base_reference = Enums.NodePoint.CANVAS_ITEM_EDITOR_SNAP_DIALOG_GRID_OPTIONS
+
+		resolver_steps = [
+			Types.GetChildTypeStep.new("SpinBox", 0),
+		]
+
+
+class CanvasItemEditorSnapDialogGridOffsetYDef extends Types.Definition:
+	func _init() -> void:
+		node_type = "SpinBox"
+		base_reference = Enums.NodePoint.CANVAS_ITEM_EDITOR_SNAP_DIALOG_GRID_OPTIONS
+
+		resolver_steps = [
+			Types.GetChildTypeStep.new("SpinBox", 1),
+		]
+
+
+class CanvasItemEditorSnapDialogGridStepXDef extends Types.Definition:
+	func _init() -> void:
+		node_type = "SpinBox"
+		base_reference = Enums.NodePoint.CANVAS_ITEM_EDITOR_SNAP_DIALOG_GRID_OPTIONS
+
+		resolver_steps = [
+			Types.GetChildTypeStep.new("SpinBox", 2),
+		]
+
+
+class CanvasItemEditorSnapDialogGridStepYDef extends Types.Definition:
+	func _init() -> void:
+		node_type = "SpinBox"
+		base_reference = Enums.NodePoint.CANVAS_ITEM_EDITOR_SNAP_DIALOG_GRID_OPTIONS
+
+		resolver_steps = [
+			Types.GetChildTypeStep.new("SpinBox", 3),
+		]
+
+
+class CanvasItemEditorSnapDialogGridPrimaryXDef extends Types.Definition:
+	func _init() -> void:
+		node_type = "SpinBox"
+		base_reference = Enums.NodePoint.CANVAS_ITEM_EDITOR_SNAP_DIALOG_GRID_OPTIONS
+
+		resolver_steps = [
+			Types.GetChildTypeStep.new("SpinBox", 4),
+		]
+
+
+class CanvasItemEditorSnapDialogGridPrimaryYDef extends Types.Definition:
+	func _init() -> void:
+		node_type = "SpinBox"
+		base_reference = Enums.NodePoint.CANVAS_ITEM_EDITOR_SNAP_DIALOG_GRID_OPTIONS
+
+		resolver_steps = [
+			Types.GetChildTypeStep.new("SpinBox", 5),
+		]
+
+
+class CanvasItemEditorSnapDialogRotationOptionsDef extends Types.Definition:
+	func _init() -> void:
+		node_type = "GridContainer"
+		base_reference = Enums.NodePoint.CANVAS_ITEM_EDITOR_SNAP_DIALOG_OPTIONS
+
+		resolver_steps = [
+			Types.GetChildTypeStep.new("GridContainer", 1),
+		]
+
+
+class CanvasItemEditorSnapDialogRotationOffsetDef extends Types.Definition:
+	func _init() -> void:
+		node_type = "SpinBox"
+		base_reference = Enums.NodePoint.CANVAS_ITEM_EDITOR_SNAP_DIALOG_ROTATION_OPTIONS
+
+		resolver_steps = [
+			Types.GetChildTypeStep.new("SpinBox", 0),
+		]
+
+
+class CanvasItemEditorSnapDialogRotationStepDef extends Types.Definition:
+	func _init() -> void:
+		node_type = "SpinBox"
+		base_reference = Enums.NodePoint.CANVAS_ITEM_EDITOR_SNAP_DIALOG_ROTATION_OPTIONS
+
+		resolver_steps = [
+			Types.GetChildTypeStep.new("SpinBox", 1),
+		]
+
+
+class CanvasItemEditorSnapDialogScaleOptionsDef extends Types.Definition:
+	func _init() -> void:
+		node_type = "GridContainer"
+		base_reference = Enums.NodePoint.CANVAS_ITEM_EDITOR_SNAP_DIALOG_OPTIONS
+
+		resolver_steps = [
+			Types.GetChildTypeStep.new("GridContainer", 2),
+		]
+
+
+class CanvasItemEditorSnapDialogScaleStepDef extends Types.Definition:
+	func _init() -> void:
+		node_type = "SpinBox"
+		base_reference = Enums.NodePoint.CANVAS_ITEM_EDITOR_SNAP_DIALOG_SCALE_OPTIONS
+
+		resolver_steps = [
+			Types.GetChildTypeStep.new("SpinBox", 0),
+		]
