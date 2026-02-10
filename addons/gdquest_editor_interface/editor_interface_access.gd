@@ -151,6 +151,11 @@ static func _test_resolve_relative(node_point: Enums.NodePoint, skip_cache: bool
 	# the checks.
 
 	#
+	if node_point >= Enums.NodePoint.CREATE_OBJECT_DIALOG_PANELS:
+		var scene_create_dialog := get_node(Enums.NodePoint.SCENE_DOCK_CREATE_DIALOG, true) # Don't write to cache here.
+		return get_node_relative(scene_create_dialog, node_point, skip_cache)
+
+	#
 	if node_point >= Enums.NodePoint.EDITOR_ZOOM_WIDGET_ZOOM_OUT_BUTTON:
 		var zoom_widget := get_node(Enums.NodePoint.TILE_MAP_TILES_ATLAS_VIEW_ZOOM_WIDGET, true) # Don't write to cache here.
 		return get_node_relative(zoom_widget, node_point, skip_cache)
