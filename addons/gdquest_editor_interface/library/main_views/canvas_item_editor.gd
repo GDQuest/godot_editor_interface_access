@@ -29,7 +29,7 @@ class CanvasItemEditorMainToolbarDef extends Types.Definition:
 		]
 
 
-## All buttons preset in the toolbar, resolved together.
+## All buttons present in the toolbar, resolved together.
 class CanvasItemEditorMainToolbarButtonsDef extends Types.MultiDefinition:
 	func _init() -> void:
 		node_type_map = {

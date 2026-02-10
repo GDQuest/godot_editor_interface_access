@@ -75,6 +75,29 @@ static func node_has_any_signal_callable(base_node: Node, callable_name: String,
 	return false
 
 
+# Shortcut utilities.
+
+static func popup_menu_has_shortcut_item(base_node: PopupMenu, shortcut_name: String, strict: bool = false) -> bool:
+	var editor_shortcut: Shortcut = null
+	if not shortcut_name.is_empty():
+		editor_shortcut = EditorInterface.get_editor_settings().get_shortcut(shortcut_name)
+
+	if not editor_shortcut:
+		if strict:
+			push_warning("[EIA] Shortcut '%s' doesn't exist in the editor." % [ shortcut_name ])
+		return false
+
+	for i in base_node.get_item_count():
+		var item_shortcut := base_node.get_item_shortcut(i)
+		if item_shortcut == editor_shortcut:
+			return true
+
+	if strict:
+		push_warning("[EIA] Expected shortcut '%s' item on node '%s'." % [ shortcut_name, base_node.get_class() ])
+
+	return false
+
+
 # Theme utilities.
 
 static func node_get_editor_icon(base_node: Node, strict: bool = false) -> String:
