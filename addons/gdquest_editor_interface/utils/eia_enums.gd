@@ -78,7 +78,8 @@ enum NodePoint {
 
 	#endregion
 
-	# 100_000 - Dialogs.
+	# NOTE: Split into individual regions per dialog when more nodes are implemented.
+	#region 100_000 - Dialogs.
 
 	EDITOR_SETTINGS_DIALOG = 101_000,
 	PROJECT_SETTINGS_DIALOG = 102_000,
@@ -102,6 +103,8 @@ enum NodePoint {
 
 	IMPORT_DYNAMIC_FONT_SETTINGS_DIALOG = 152_000,
 
+	#endregion
+
 
 	# 200_000 - Docks (including bottom panel).
 
@@ -113,10 +116,17 @@ enum NodePoint {
 
 	#endregion
 
-	# Docks: ...
+	#region Docks: History.
 
 	HISTORY_DOCK = 203_000,
+
+	#endregion
+
+	#region Docks: Import.
+
 	IMPORT_DOCK = 205_000,
+
+	#endregion
 
 	#region Docks: Inspector.
 
@@ -207,13 +217,29 @@ enum NodePoint {
 
 	#endregion
 
-	# Docks: ...
+	#region Docks: Debugger.
 
 	DEBUGGER_DOCK = 310_000,
 
+	#endregion
+
+	#region Docks: Animation.
+
 	ANIMATION_DOCK = 400_000,
+
+	#endregion
+
+	#region Docks: AnimationTree.
+
 	ANIMATION_TREE_DOCK = 410_000,
+
+	#endregion
+
+	#region Docks: Audio.
+
 	AUDIO_DOCK = 420_000,
+
+	#endregion
 
 	#region Docks: GridMap.
 
@@ -235,12 +261,29 @@ enum NodePoint {
 
 	#endregion
 
-	# Docks: ...
+	#region Docks: ResourcePreloader.
 
 	RESOURCE_PRELOADER_DOCK = 460_000,
+
+	#endregion
+
+	#region Docks: SearchResults.
+
 	SEARCH_RESULTS_DOCK = 470_000,
+
+	#endregion
+
+	#region Docks: Shader.
+
 	SHADER_DOCK = 480_000,
+
+	#endregion
+
+	#region Docks: ShaderFile.
+
 	SHADER_FILE_DOCK = 490_000,
+
+	#endregion
 
 	#region Docks: SpriteFrames.
 
@@ -362,6 +405,8 @@ enum NodePoint {
 	#endregion
 
 
+	# >999_999 - Main views/editors.
+
 	#region 1_000_000 - Canvas editor.
 
 	CANVAS_ITEM_EDITOR = 1_000_001,
@@ -440,6 +485,7 @@ enum NodePoint {
 
 	NODE_3D_EDITOR_CONTEXTUAL_TOOLBARS = 2_002_000,
 
+	# This is a reusable component.
 	#NODE_3D_EDITOR_VIEWPORT = 2_100_000,
 	NODE_3D_EDITOR_VIEWPORT_SCENE_ROOT = 2_100_001,
 	NODE_3D_EDITOR_VIEWPORT_CAMERA,
@@ -492,6 +538,8 @@ enum NodePoint {
 
 	#endregion
 
+
+	# >99_999_999 - Misc. widgets and components.
 
 	#region 100_000_000 - Reusable components.
 
