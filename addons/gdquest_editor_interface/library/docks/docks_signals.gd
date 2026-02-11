@@ -74,12 +74,16 @@ class SignalsEditorConnectButtonDef extends Types.Definition:
 		node_type = "Button"
 		base_reference = Enums.NodePoint.SIGNALS_EDITOR
 
+		# NOTE: This button can change its icon, or have no icon at all.
+		# So for extra check we validate using the callable.
+
 		resolver_steps = [
 			Types.GetChildTypeStep.new("VBoxContainer", 0),
 			Types.GetChildTypeStep.new("HBoxContainer", -1),
 			Types.GetChildTypeStep.new("Button", 0),
-			Types.HasEditorIconStep.new("Instance"),
+			Types.HasSignalCallableStep.new("pressed", "ConnectionsDock::_connect_pressed"),
 		]
+
 
 ## Connect dialog for the signal editor.
 class SignalsDialogDef extends Types.Definition:
