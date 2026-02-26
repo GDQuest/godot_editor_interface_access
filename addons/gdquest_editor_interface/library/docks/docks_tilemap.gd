@@ -30,6 +30,7 @@ class TileMapDockTabsDef extends Types.Definition:
 			Types.GetChildTypeStep.new("FlowContainer", 0),
 			Types.GetChildIndexStep.new(0),
 			Types.GetChildTypeStep.new("TabBar", 0),
+			Types.HasTabsNamesStep.new([ "Tiles", "Patterns", "Terrains" ], true),
 		]
 
 
@@ -216,7 +217,7 @@ class TileMapTilesPanelDef extends Types.Definition:
 
 		resolver_steps = [
 			Types.GetChildIndexStep.new(0),
-			Types.GetNodePathStep.new("Tiles"),
+			Types.GetNodePathStep.new("Tiles", true),
 		]
 
 
@@ -227,7 +228,7 @@ class TileMapPatternsPanelDef extends Types.Definition:
 
 		resolver_steps = [
 			Types.GetChildIndexStep.new(0),
-			Types.GetNodePathStep.new("Patterns"),
+			Types.GetNodePathStep.new("Patterns", true),
 		]
 
 
@@ -238,7 +239,7 @@ class TileMapTerrainsPanelDef extends Types.Definition:
 
 		resolver_steps = [
 			Types.GetChildIndexStep.new(0),
-			Types.GetNodePathStep.new("Terrains"),
+			Types.GetNodePathStep.new("Terrains", true),
 		]
 
 

@@ -195,17 +195,32 @@ class FindNodeTypeStep extends Step:
 ## Returns a descendant node according to the specified node path.
 class GetNodePathStep extends Step:
 	var node_path: NodePath = ""
+	var translate_path: bool = false
 
-	func _init(path: NodePath) -> void:
+	func _init(path: NodePath, translate: bool = false) -> void:
 		node_path = path
+		translate_path = translate
 
 	func resolve(base_node: Node, step_index: int = 0) -> Node:
 		if not base_node:
 			return null
 
+		# Some nodes may be named with translatable names, which change depending on
+		# the language. So we check for both names. This only works if the entire
+		# path is a translatable string.
+		var tred_path: NodePath = ""
+
 		var fetched_node := base_node.get_node_or_null(node_path)
+		if not fetched_node && translate_path:
+			var editor_domain := TranslationServer.get_or_add_domain("godot.editor")
+			tred_path = String(editor_domain.translate(String(node_path)))
+			fetched_node = base_node.get_node_or_null(tred_path)
+
 		if not fetched_node:
-			push_error("[EIA] Step %d: Expected a node at path '%s'." % [ step_index, node_path ])
+			if translate_path:
+				push_error("[EIA] Step %d: Expected a node at path '%s' or '%s'." % [ step_index, node_path, tred_path ])
+			else:
+				push_error("[EIA] Step %d: Expected a node at path '%s'." % [ step_index, node_path ])
 			return null
 
 		return fetched_node
@@ -356,3 +371,58 @@ class HasSignalCallableStep extends Step:
 
 		push_error("[EIA] Step %d: Expected callable '%s' connected to signal '%s'." % [ step_index, callable_name, signal_name ])
 		return null
+
+
+## Checks if the tab container or tab bar has tabs with specified
+## names in the specified order. Optionally checks if there are
+## only these tabs.
+class HasTabsNamesStep extends Step:
+	var tab_names: PackedStringArray = []
+	var check_strict_count: bool = false
+
+	func _init(names: PackedStringArray, strict_count: bool = false) -> void:
+		tab_names = names
+		check_strict_count = strict_count
+
+	func resolve(base_node: Node, step_index: int = 0) -> Node:
+		if not base_node:
+			return null
+
+		var tab_bar: TabBar = null
+		if base_node is TabBar:
+			tab_bar = base_node
+		elif base_node is TabContainer:
+			tab_bar = base_node.get_tab_bar()
+		else:
+			push_warning("[EIA] Step %d: Node type '%s' not supported by tabs names resolver." % [ step_index, base_node.get_class() ])
+			return null
+
+		if check_strict_count && tab_bar.tab_count != tab_names.size():
+			push_warning("[EIA] Step %d: Expected node to have exactly %d tabs, found %d." % [ step_index, tab_names.size(), tab_bar.tab_count ])
+			return null
+
+		# We check the name against current editor translation. This works for a fresh
+		# editor start (which is requested when you change the language), but may not
+		# work between changing the language and a restart. For our purposes, that's
+		# sufficiently reliable.
+		var editor_domain := TranslationServer.get_or_add_domain("godot.editor")
+
+		var failed_check := false
+		for i in tab_names.size():
+			var translated_tab_name := editor_domain.translate(tab_names[i])
+			var found_tab_name := tab_bar.get_tab_title(i)
+
+			# Actually, we check for both untranslated and translated strings. Godot
+			# editor is a bit inconsistent when it comes to applying translations. In
+			# 2/3 of the cases it uses TTR() and in 1/3 — TTRC(), for no obvious reason
+			# a lot of time. The latter doesn't go through the translation server, but
+			# the final editor widget will still appear translated due to automatic
+			# translation in controls, through atr().
+			if found_tab_name != translated_tab_name && found_tab_name != tab_names[i]:
+				push_warning("[EIA] Step %d: Expected tab %d name '%s', found '%s'." % [ step_index, i, translated_tab_name, tab_names[i], found_tab_name ])
+				failed_check = true
+
+		if failed_check:
+			return null
+
+		return base_node

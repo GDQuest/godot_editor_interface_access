@@ -49,6 +49,7 @@ class TileSetDockTabsDef extends Types.Definition:
 			Types.GetChildTypeStep.new("HBoxContainer", 0),
 			Types.GetChildTypeStep.new("PanelContainer", 0),
 			Types.GetChildTypeStep.new("TabBar", 0),
+			Types.HasTabsNamesStep.new([ "Tile Sources", "Patterns" ], true),
 		]
 
 
@@ -61,7 +62,7 @@ class TileSetTilesPanelDef extends Types.Definition:
 
 		resolver_steps = [
 			Types.GetChildTypeStep.new("VBoxContainer", 0),
-			Types.GetNodePathStep.new("Tiles"),
+			Types.GetNodePathStep.new("Tiles", true),
 		]
 
 
