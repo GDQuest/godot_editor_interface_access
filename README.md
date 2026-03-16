@@ -68,4 +68,4 @@ you to set up the editor in a certain way (e.g. open a script file for editing).
 
 ## License
 
-License status is currently pending.
+This project is provided under an [MIT license](LICENSE).
