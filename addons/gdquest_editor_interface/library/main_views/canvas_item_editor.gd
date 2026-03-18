@@ -198,6 +198,43 @@ class CanvasItemEditorViewportOverlaysDef extends Types.Definition:
 		]
 
 
+class CanvasItemEditorViewportZoomWidgetDef extends Types.Definition:
+	func _init() -> void:
+		node_type = "EditorZoomWidget"
+		base_reference = Enums.NodePoint.CANVAS_ITEM_EDITOR_VIEWPORT_OVERLAYS
+
+		resolver_steps = [
+			Types.GetChildTypeStep.new("VBoxContainer", 0),
+			Types.GetChildTypeStep.new("HBoxContainer", 0),
+			Types.GetChildTypeStep.new("EditorZoomWidget", 0),
+		]
+
+
+class CanvasItemEditorViewportCenterButtonDef extends Types.Definition:
+	func _init() -> void:
+		node_type = "Button"
+		base_reference = Enums.NodePoint.CANVAS_ITEM_EDITOR_VIEWPORT_OVERLAYS
+
+		resolver_steps = [
+			Types.GetChildTypeStep.new("VBoxContainer", 0),
+			Types.GetChildTypeStep.new("HBoxContainer", 0),
+			Types.GetChildTypeStep.new("Button", 0),
+			Types.HasEditorIconStep.new("CenterView"),
+		]
+
+
+class CanvasItemEditorViewportTranslationPreviewButtonDef extends Types.Definition:
+	func _init() -> void:
+		node_type = "EditorTranslationPreviewButton"
+		base_reference = Enums.NodePoint.CANVAS_ITEM_EDITOR_VIEWPORT_OVERLAYS
+
+		resolver_steps = [
+			Types.GetChildTypeStep.new("VBoxContainer", 0),
+			Types.GetChildTypeStep.new("HBoxContainer", 0),
+			Types.GetChildTypeStep.new("EditorTranslationPreviewButton"),
+		]
+
+
 # Snap options dialog.
 
 class CanvasItemEditorSnapDialogDef extends Types.Definition:

@@ -299,6 +299,7 @@ class TileMapTilesAtlasViewCenterButtonDef extends Types.Definition:
 
 		resolver_steps = [
 			Types.GetChildTypeStep.new("Button", 0),
+			Types.HasEditorIconStep.new("CenterView"),
 		]
 
 
