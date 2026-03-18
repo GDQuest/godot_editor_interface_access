@@ -115,6 +115,57 @@ static func get_dock_tab_index(dock_node: EditorDock) -> int:
 	return (dock_owner as TabContainer).get_tab_idx_from_control(dock_node)
 
 
+## Finds the [EditorProperty] node for the given property name. Returns
+## [code]null[/code] if it cannot be found.
+##
+## [b]Note:[/b] When trying to access properties inside of a sub-inspector,
+## make sure it is expanded. Properties inside of collapsed sections
+## are always accessible. For properties merged with section headers, use
+## [method find_inspector_section_by_first_property] instead.
+static func find_inspector_property_by_name(inspector_node: EditorInspector, property_name: StringName) -> EditorProperty:
+	# TODO: This is a brute force approach, so it's far from optimal. It would've been nice
+	# if editor provided utilities to get the widget associated with the given property name.
+	var all_properties := inspector_node.find_children("", "EditorProperty", true, false)
+	var matching_index := all_properties.find_custom(func(prop: EditorProperty) -> bool:
+		return prop.get_edited_property() == property_name
+	)
+
+	if matching_index < 0:
+		return null
+	return all_properties[matching_index]
+
+
+## Finds an inspector section for the given property name of the first child
+## [EditorProperty]. Returns [code]null[/code] if it cannot be found.
+##
+## [b]Note:[/b] When trying to access properties inside of a sub-inspector,
+## make sure it is expanded. For regular properties use [method find_inspector_property_by_name].
+## [b]Note:[/b] When the first property is pinned as favorite, this method
+## returns the copy of this section inside of the favorites area.
+static func find_inspector_section_by_first_property(inspector_node: EditorInspector, first_property_name: StringName) -> Control:
+	# TODO: This is a brute force approach, so it's far from optimal. It would've been nice
+	# if editor provided utilities to get the widget associated with the given property name.
+	# On top of that, sections specifically have limited API compared to EditorProperty
+	# (not to mention, EditorInspectorSection is not exposed), which is why we have to rely
+	# on the first property.
+	var all_sections := inspector_node.find_children("", "EditorInspectorSection", true, false)
+	var matching_index := all_sections.find_custom(func(node: Node) -> bool:
+		var property_box: VBoxContainer = node.call("get_vbox") # The class is hidden from the API, but method exists.
+		if not property_box || property_box.get_child_count() == 0:
+			return false
+
+		var first_property: EditorProperty = property_box.get_child(0)
+		if not first_property:
+			return false
+
+		return first_property.get_edited_property() == first_property_name
+	)
+
+	if matching_index < 0:
+		return null
+	return all_sections[matching_index]
+
+
 # Testing.
 
 ## Runs resolution for every known node point and reports success status.
