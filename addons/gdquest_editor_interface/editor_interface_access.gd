@@ -39,16 +39,24 @@ static func get_node_class(node_point: Enums.NodePoint) -> String:
 
 ## Returns one of the 3D viewports from the 3D editor.
 ##
-## [b]Note:[/b] The index does not necessarily correspond to the order in
-## which viewports are made visible. I.e. the viewport at index [code]1[/code]
-## does not necessarily become visible in the 2-viewport split mode.
+## [b]Note:[/b] The index generally corresponds to the order of viewports
+## becoming visible, regardless of the use of alternative layouts. In the
+## 3-way split, the two smaller viewports go before the larger one. Other
+## than that, it's left-to-right, top-to-bottom.
 ##
-## These viewports also do not contain the edited scene. Instead, you can use
-## [method EditorInterface.get_edited_scene_root] and go up from there. You'll
-## end up in the viewport of the [CanvasItemEditor].
+## [b]Note:[/b] These viewports do not contain the edited scene. Instead, you
+## can use [method EditorInterface.get_edited_scene_root] and go up from there.
+## You'll end up in the viewport of the [CanvasItemEditor].
 static func get_node_3d_viewport(viewport_index: int) -> Control:
 	var viewports_container := get_node(Enums.NodePoint.NODE_3D_EDITOR_VIEWPORTS)
-	var viewports := viewports_container.find_children("", "Node3DEditorViewport", false, false)
+	var layout_splits: Array[SplitContainer] = [
+		viewports_container.get_child(0).get_child(0),
+		viewports_container.get_child(0).get_child(1),
+	]
+
+	var viewports: Array[Control] = []
+	for split_container in layout_splits:
+		viewports.append_array(split_container.find_children("", "Node3DEditorViewport", false, false))
 
 	if viewport_index < 0 || viewport_index >= viewports.size():
 		return null
@@ -293,7 +301,14 @@ static func _test_resolve_relative(node_point: Enums.NodePoint, skip_cache: bool
 	#
 	if node_point >= Enums.NodePoint.NODE_3D_EDITOR_VIEWPORT_SCENE_ROOT:
 		var viewports_container := get_node(Enums.NodePoint.NODE_3D_EDITOR_VIEWPORTS, true) # Don't write to cache here.
-		var viewports := viewports_container.find_children("", "Node3DEditorViewport", false, false)
+		var layout_splits: Array[SplitContainer] = [
+			viewports_container.get_child(0).get_child(0),
+			viewports_container.get_child(0).get_child(1),
+		]
+
+		var viewports: Array[Control] = []
+		for split_container in layout_splits:
+			viewports.append_array(split_container.find_children("", "Node3DEditorViewport", false, false))
 		if viewports.is_empty():
 			return null
 

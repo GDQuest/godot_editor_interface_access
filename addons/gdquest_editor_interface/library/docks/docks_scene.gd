@@ -288,7 +288,8 @@ class SceneTreeLocalToggleDef extends Types.Definition:
 
 		resolver_steps = [
 			Types.GetChildIndexStep.new(0),
-			Types.GetChildTypeStep.new("HBoxContainer", 1),
+			Types.GetChildTypeStep.new("PanelContainer", 0),
+			Types.GetChildTypeStep.new("HBoxContainer", 0),
 			Types.GetChildTypeStep.new("Button", 1),
 			Types.HasSignalCallableStep.new("pressed", "SceneTreeDock::_local_tree_selected"),
 		]
@@ -301,7 +302,8 @@ class SceneTreeRemoteToggleDef extends Types.Definition:
 
 		resolver_steps = [
 			Types.GetChildIndexStep.new(0),
-			Types.GetChildTypeStep.new("HBoxContainer", 1),
+			Types.GetChildTypeStep.new("PanelContainer"),
+			Types.GetChildTypeStep.new("HBoxContainer"),
 			Types.GetChildTypeStep.new("Button", 0),
 			Types.HasSignalCallableStep.new("pressed", "SceneTreeDock::_remote_tree_selected"),
 		]

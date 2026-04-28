@@ -84,89 +84,89 @@ class LayoutTitleBarDef extends Types.Definition:
 
 class LayoutDockLeftLeftTopDef extends Types.Definition:
 	func _init() -> void:
-		node_type = "TabContainer"
+		node_type = "SideDockTabContainer"
 		base_reference = Enums.NodePoint.LAYOUT_ROOT
 
 		resolver_steps = [
 			Types.GetChildIndexStep.new(0),
-			Types.GetNodePathStep.new("DockHSplitMain/DockVSplitLeftL/DockSlotLeftUL"),
+			Types.GetNodePathStep.new("DockVSplitMain/DockHSplitMain/DockVSplitLeftL/DockSlotLeftUL"),
 		]
 
 
 class LayoutDockLeftLeftBottomDef extends Types.Definition:
 	func _init() -> void:
-		node_type = "TabContainer"
+		node_type = "SideDockTabContainer"
 		base_reference = Enums.NodePoint.LAYOUT_ROOT
 
 		resolver_steps = [
 			Types.GetChildIndexStep.new(0),
-			Types.GetNodePathStep.new("DockHSplitMain/DockVSplitLeftL/DockSlotLeftBL"),
+			Types.GetNodePathStep.new("DockVSplitMain/DockHSplitMain/DockVSplitLeftL/DockSlotLeftBL"),
 		]
 
 
 class LayoutDockLeftRightTopDef extends Types.Definition:
 	func _init() -> void:
-		node_type = "TabContainer"
+		node_type = "SideDockTabContainer"
 		base_reference = Enums.NodePoint.LAYOUT_ROOT
 
 		resolver_steps = [
 			Types.GetChildIndexStep.new(0),
-			Types.GetNodePathStep.new("DockHSplitMain/DockVSplitLeftR/DockSlotLeftUR"),
+			Types.GetNodePathStep.new("DockVSplitMain/DockHSplitMain/DockVSplitLeftR/DockSlotLeftUR"),
 		]
 
 
 class LayoutDockLeftRightBottomDef extends Types.Definition:
 	func _init() -> void:
-		node_type = "TabContainer"
+		node_type = "SideDockTabContainer"
 		base_reference = Enums.NodePoint.LAYOUT_ROOT
 
 		resolver_steps = [
 			Types.GetChildIndexStep.new(0),
-			Types.GetNodePathStep.new("DockHSplitMain/DockVSplitLeftR/DockSlotLeftBR"),
+			Types.GetNodePathStep.new("DockVSplitMain/DockHSplitMain/DockVSplitLeftR/DockSlotLeftBR"),
 		]
 
 
 class LayoutDockRightLeftTopDef extends Types.Definition:
 	func _init() -> void:
-		node_type = "TabContainer"
+		node_type = "SideDockTabContainer"
 		base_reference = Enums.NodePoint.LAYOUT_ROOT
 
 		resolver_steps = [
 			Types.GetChildIndexStep.new(0),
-			Types.GetNodePathStep.new("DockHSplitMain/DockVSplitRightL/DockSlotRightUL"),
+			Types.GetNodePathStep.new("DockVSplitMain/DockHSplitMain/DockVSplitRightL/DockSlotRightUL"),
 		]
 
 
 class LayoutDockRightLeftBottomDef extends Types.Definition:
 	func _init() -> void:
-		node_type = "TabContainer"
+		node_type = "SideDockTabContainer"
 		base_reference = Enums.NodePoint.LAYOUT_ROOT
 
 		resolver_steps = [
 			Types.GetChildIndexStep.new(0),
-			Types.GetNodePathStep.new("DockHSplitMain/DockVSplitRightL/DockSlotRightBL"),
+			Types.GetNodePathStep.new("DockVSplitMain/DockHSplitMain/DockVSplitRightL/DockSlotRightBL"),
 		]
 
 
 class LayoutDockRightRightTopDef extends Types.Definition:
 	func _init() -> void:
-		node_type = "TabContainer"
+		node_type = "SideDockTabContainer"
 		base_reference = Enums.NodePoint.LAYOUT_ROOT
 
 		resolver_steps = [
 			Types.GetChildIndexStep.new(0),
-			Types.GetNodePathStep.new("DockHSplitMain/DockVSplitRightR/DockSlotRightUR"),
+			Types.GetNodePathStep.new("DockVSplitMain/DockHSplitMain/DockVSplitRightR/DockSlotRightUR"),
 		]
 
 
 class LayoutDockRightRightBottomDef extends Types.Definition:
 	func _init() -> void:
-		node_type = "TabContainer"
+		node_type = "SideDockTabContainer"
 		base_reference = Enums.NodePoint.LAYOUT_ROOT
 
 		resolver_steps = [
 			Types.GetChildIndexStep.new(0),
-			Types.GetNodePathStep.new("DockHSplitMain/DockVSplitRightR/DockSlotRightBR"),
+			Types.GetNodePathStep.new("DockVSplitMain/DockHSplitMain/DockVSplitRightR/DockSlotRightBR"),
 		]
 
 
@@ -177,10 +177,33 @@ class LayoutDockMiddleBottomDef extends Types.Definition:
 
 		resolver_steps = [
 			Types.GetChildIndexStep.new(0),
+			Types.GetNodePathStep.new("DockVSplitMain"),
 			Types.GetNodePathStep.new("DockHSplitMain"),
 			Types.GetChildTypeStep.new("VBoxContainer", 0),
 			Types.GetNodePathStep.new("DockVSplitCenter"),
 			Types.GetChildTypeStep.new("EditorBottomPanel"),
+		]
+
+
+class LayoutDockBottomLeftDef extends Types.Definition:
+	func _init() -> void:
+		node_type = "BottomSideDockTabContainer"
+		base_reference = Enums.NodePoint.LAYOUT_ROOT
+
+		resolver_steps = [
+			Types.GetChildIndexStep.new(0),
+			Types.GetNodePathStep.new("DockVSplitMain/DockHSplitBottom/DockSlotBottomL"),
+		]
+
+
+class LayoutDockBottomRightDef extends Types.Definition:
+	func _init() -> void:
+		node_type = "BottomSideDockTabContainer"
+		base_reference = Enums.NodePoint.LAYOUT_ROOT
+
+		resolver_steps = [
+			Types.GetChildIndexStep.new(0),
+			Types.GetNodePathStep.new("DockVSplitMain/DockHSplitBottom/DockSlotBottomR"),
 		]
 
 
@@ -191,9 +214,10 @@ class LayoutDockHiddenContainerDef extends Types.Definition:
 
 		# To reinforce the fetch here we can check that there is at least one
 		# EditorDock child. It's very unlikely that the control will be empty,
-		# especially at launch. But at this time its order is fixed, so eh.
+		# especially at launch. For now, we rely on it being exactly a base
+		# Control at a fixed position.
 		resolver_steps = [
-			Types.GetChildIndexStep.new(1),
+			Types.GetChildTypeStep.new("Control", 0, true),
 		]
 
 
@@ -255,6 +279,7 @@ class LayoutExpandBottomButtonDef extends Types.Definition:
 
 		resolver_steps = [
 			Types.DoCustomStep.new(get_tab_bar),
+			Types.GetParentCountStep.new(1),
 			Types.GetChildTypeStep.new("HBoxContainer", 0),
 			Types.DoCustomStep.new(custom_script),
 			Types.HasEditorIconStep.new("ExpandBottomDock"),
@@ -279,6 +304,7 @@ class LayoutPinBottomButtonDef extends Types.Definition:
 
 		resolver_steps = [
 			Types.DoCustomStep.new(get_tab_bar),
+			Types.GetParentCountStep.new(1),
 			Types.GetChildTypeStep.new("HBoxContainer", 0),
 			Types.DoCustomStep.new(custom_script),
 			Types.HasEditorIconStep.new("Pin"),
@@ -331,6 +357,7 @@ class EditorVersionButtonDef extends Types.Definition:
 
 		resolver_steps = [
 			Types.DoCustomStep.new(get_tab_bar),
+			Types.GetParentCountStep.new(1),
 			Types.GetChildTypeStep.new("HBoxContainer", 0),
 			Types.GetChildTypeStep.new("EditorVersionButton"),
 		]

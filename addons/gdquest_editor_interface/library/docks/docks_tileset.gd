@@ -22,6 +22,8 @@ class TileSetDockDef extends Types.Definition:
 			Enums.NodePoint.LAYOUT_DOCK_RIGHT_RIGHT_TOP,
 			Enums.NodePoint.LAYOUT_DOCK_RIGHT_RIGHT_BOTTOM,
 			Enums.NodePoint.LAYOUT_DOCK_MIDDLE_BOTTOM,
+			Enums.NodePoint.LAYOUT_DOCK_BOTTOM_LEFT,
+			Enums.NodePoint.LAYOUT_DOCK_BOTTOM_RIGHT,
 			Enums.NodePoint.LAYOUT_DOCK_HIDDEN_CONTAINER,
 		]
 

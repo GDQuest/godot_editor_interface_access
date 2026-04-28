@@ -56,13 +56,13 @@ class MainViewSwitcherGameButtonDef extends Types.Definition:
 		]
 
 
-class MainViewSwitcherAssetLibButtonDef extends Types.Definition:
+class MainViewSwitcherAssetStoreButtonDef extends Types.Definition:
 	func _init() -> void:
 		node_type = "Button"
 		base_reference = Enums.NodePoint.MAIN_VIEW_SWITCHER
 
 		resolver_steps = [
-			Types.GetNodePathStep.new("AssetLib")
+			Types.GetNodePathStep.new("Asset Store")
 		]
 
 
