@@ -28,6 +28,13 @@ static func get_node_relative(base_node: Node, node_point: Enums.NodePoint, skip
 	return Resolver.resolve_node(node_point, base_node, skip_cache)
 
 
+## Returns the expected class name of the node associated with the given node
+## point value. Can be used with [ClassDB], even if the type is not exposed
+## directly to scripting.
+static func get_node_class(node_point: Enums.NodePoint) -> String:
+	return Resolver.get_node_class(node_point)
+
+
 # Helpers.
 
 ## Returns one of the 3D viewports from the 3D editor.
