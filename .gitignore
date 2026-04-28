@@ -1,5 +1,6 @@
 ### Special ignores.
-/testdata/
+/tests/extra/
+/tests/reports/
 
 ### Godot-specific ignores ###
 .godot/
