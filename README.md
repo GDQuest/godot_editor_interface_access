@@ -16,7 +16,7 @@ of editor nodes that you can reference at a moment's notice!
 
 ## Compatibility
 
-This library is compatible with **Godot 4.6.1**.
+This library is compatible with **Godot 4.6.2**.
 
 Compatibility with other Godot versions, even patch releases, cannot be guaranteed
 due to the nature of this work. You should expect that:
