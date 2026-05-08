@@ -109,4 +109,4 @@ you to set up the editor in a certain way (e.g. open a script file for editing).
 
 ## License
 
-This project is provided under an [MIT license](LICENSE).
+This project is provided under the [GPL v3](LICENSE).
