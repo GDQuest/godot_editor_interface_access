@@ -68,7 +68,6 @@ class OutputDockToolbarTextFilterDef extends Types.Definition:
 		base_reference = Enums.NodePoint.OUTPUT_DOCK_TOOLBAR
 
 		resolver_steps = [
-			Types.GetChildTypeStep.new("HBoxContainer", 0),
 			Types.GetChildTypeStep.new("LineEdit"),
 		]
 
@@ -79,7 +78,6 @@ class OutputDockToolbarClearOutputButtonDef extends Types.Definition:
 		base_reference = Enums.NodePoint.OUTPUT_DOCK_TOOLBAR
 
 		resolver_steps = [
-			Types.GetChildTypeStep.new("HBoxContainer", 0),
 			Types.GetChildTypeStep.new("Button", 0),
 			Types.HasSignalCallableStep.new("pressed", "EditorLog::_clear_request"),
 			Types.HasEditorIconStep.new("Clear"),
@@ -92,8 +90,7 @@ class OutputDockToolbarCollapseDuplicatesButtonDef extends Types.Definition:
 		base_reference = Enums.NodePoint.OUTPUT_DOCK_TOOLBAR
 
 		resolver_steps = [
-			Types.GetChildTypeStep.new("HBoxContainer", 1),
-			Types.GetChildTypeStep.new("Button", 0),
+			Types.GetChildTypeStep.new("Button", 1),
 			Types.HasSignalCallableStep.new("toggled", "EditorLog::_set_collapse"),
 			Types.HasEditorIconStep.new("CombineLines"),
 		]
@@ -105,8 +102,8 @@ class OutputDockToolbarToggleStandardLogsButtonDef extends Types.Definition:
 		base_reference = Enums.NodePoint.OUTPUT_DOCK_TOOLBAR
 
 		resolver_steps = [
-			Types.GetChildTypeStep.new("HBoxContainer", 1),
-			Types.GetChildTypeStep.new("Button", 1),
+			Types.GetChildTypeStep.new("HBoxContainer", 0),
+			Types.GetChildTypeStep.new("Button", 0),
 			Types.HasSignalCallableStep.new("toggled", "EditorLog::_set_filter_active"),
 			Types.HasEditorIconStep.new("Popup"),
 		]
@@ -118,8 +115,8 @@ class OutputDockToolbarToggleErrorsButtonDef extends Types.Definition:
 		base_reference = Enums.NodePoint.OUTPUT_DOCK_TOOLBAR
 
 		resolver_steps = [
-			Types.GetChildTypeStep.new("HBoxContainer", 1),
-			Types.GetChildTypeStep.new("Button", 2),
+			Types.GetChildTypeStep.new("HBoxContainer", 0),
+			Types.GetChildTypeStep.new("Button", 1),
 			Types.HasSignalCallableStep.new("toggled", "EditorLog::_set_filter_active"),
 			Types.HasEditorIconStep.new("StatusError"),
 		]
@@ -131,8 +128,8 @@ class OutputDockToolbarToggleWarningsButtonDef extends Types.Definition:
 		base_reference = Enums.NodePoint.OUTPUT_DOCK_TOOLBAR
 
 		resolver_steps = [
-			Types.GetChildTypeStep.new("HBoxContainer", 1),
-			Types.GetChildTypeStep.new("Button", 3),
+			Types.GetChildTypeStep.new("HBoxContainer", 0),
+			Types.GetChildTypeStep.new("Button", 2),
 			Types.HasSignalCallableStep.new("toggled", "EditorLog::_set_filter_active"),
 			Types.HasEditorIconStep.new("StatusWarning"),
 		]
@@ -144,8 +141,8 @@ class OutputDockToolbarToggleEditorLogsButtonDef extends Types.Definition:
 		base_reference = Enums.NodePoint.OUTPUT_DOCK_TOOLBAR
 
 		resolver_steps = [
-			Types.GetChildTypeStep.new("HBoxContainer", 1),
-			Types.GetChildTypeStep.new("Button", 4),
+			Types.GetChildTypeStep.new("HBoxContainer", 0),
+			Types.GetChildTypeStep.new("Button", 3),
 			Types.HasSignalCallableStep.new("toggled", "EditorLog::_set_filter_active"),
 			Types.HasEditorIconStep.new("Edit"),
 		]
