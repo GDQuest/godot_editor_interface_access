@@ -107,14 +107,14 @@ class CreateObjectDialogSearchPanelDef extends Types.Definition:
 
 class CreateObjectDialogSearchTextFilterDef extends Types.Definition:
 	func _init() -> void:
-		node_type = "LineEdit"
+		node_type = "FilterLineEdit"
 		relative_node_type = "CreateDialog"
 		base_reference = Enums.NodePoint.CREATE_OBJECT_DIALOG_SEARCH_PANEL
 
 		resolver_steps = [
 			Types.GetChildTypeStep.new("MarginContainer", 0),
 			Types.GetChildIndexStep.new(0),
-			Types.GetChildTypeStep.new("LineEdit"),
+			Types.GetChildTypeStep.new("FilterLineEdit"),
 		]
 
 
@@ -131,6 +131,31 @@ class CreateObjectDialogSearchFavoriteButtonDef extends Types.Definition:
 		]
 
 
+class CreateObjectDialogSearchFilterMenuButtonDef extends Types.Definition:
+	func _init() -> void:
+		node_type = "MenuButton"
+		relative_node_type = "CreateDialog"
+		base_reference = Enums.NodePoint.CREATE_OBJECT_DIALOG_SEARCH_PANEL
+
+		resolver_steps = [
+			Types.GetChildTypeStep.new("HBoxContainer", 0),
+			Types.GetChildTypeStep.new("MenuButton"),
+		]
+
+
+class CreateObjectDialogSearchFilterResetButtonDef extends Types.Definition:
+	func _init() -> void:
+		node_type = "Button"
+		relative_node_type = "CreateDialog"
+		base_reference = Enums.NodePoint.CREATE_OBJECT_DIALOG_SEARCH_PANEL
+
+		resolver_steps = [
+			Types.GetChildTypeStep.new("HBoxContainer", 0),
+			Types.GetChildTypeStep.new("Button"),
+			Types.HasEditorIconStep.new("Reload"),
+		]
+
+
 class CreateObjectDialogSearchMatchesListDef extends Types.Definition:
 	func _init() -> void:
 		node_type = "Tree"
@@ -138,7 +163,6 @@ class CreateObjectDialogSearchMatchesListDef extends Types.Definition:
 		base_reference = Enums.NodePoint.CREATE_OBJECT_DIALOG_SEARCH_PANEL
 
 		resolver_steps = [
-			Types.GetChildTypeStep.new("MarginContainer", 1),
 			Types.GetChildTypeStep.new("Tree"),
 		]
 

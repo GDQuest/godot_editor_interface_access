@@ -105,13 +105,17 @@ class DoCustomMultiStep extends Step:
 ## Finds a child node of the specified type. Optionally, can find the
 ## N-th child for the given type (only counting successful matches).
 ## If the given index is negative, searches from the end.
+## By default, matches any type that extends the given type, which
+## can be changed to an exact match with an optional flag.
 class GetChildTypeStep extends Step:
 	var type_name: String = ""
 	var type_index: int = 0
+	var type_exact: bool = false
 
-	func _init(name: String, index: int = 0) -> void:
+	func _init(name: String, index: int = 0, exact: bool = false) -> void:
 		type_name = name
 		type_index = index
+		type_exact = exact
 
 	func resolve(base_node: Node, step_index: int = 0) -> Node:
 		if not base_node:
@@ -121,7 +125,8 @@ class GetChildTypeStep extends Step:
 
 		if type_index >= 0:
 			for child_node in base_node.get_children():
-				if ClassDB.is_parent_class(child_node.get_class(), type_name):
+				var child_type_name := child_node.get_class()
+				if (type_exact && child_type_name == type_name) || (not type_exact && ClassDB.is_parent_class(child_type_name, type_name)):
 					counter += 1
 					if counter == type_index:
 						return child_node
@@ -134,7 +139,8 @@ class GetChildTypeStep extends Step:
 
 			while child_index >= 0:
 				var child_node := base_node.get_child(child_index)
-				if ClassDB.is_parent_class(child_node.get_class(), type_name):
+				var child_type_name := child_node.get_class()
+				if (type_exact && child_type_name == type_name) || (not type_exact && ClassDB.is_parent_class(child_type_name, type_name)):
 					counter += 1
 					if counter == target_index:
 						return child_node
